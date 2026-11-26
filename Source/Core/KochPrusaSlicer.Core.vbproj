@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>KochPrusaSlicer.Core</AssemblyName>
+    <RootNamespace></RootNamespace>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+    <OptionExplicit>On</OptionExplicit>
+    <Version>0.1.0</Version>
+    <Product>KOCH Send to PrusaSlicer (KOCH Engineering)</Product>
+    <AssemblyTitle>KOCH Send to PrusaSlicer core</AssemblyTitle>
+    <Company>KOCH Engineering</Company>
+    <Authors>KOCH Engineering</Authors>
+    <Copyright>(c) 2026 KOCH Engineering</Copyright>
+    <Description>Sends Alibre Design parts to PrusaSlicer.</Description>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <RestoreAdditionalProjectSources>https://api.nuget.org/v3/index.json</RestoreAdditionalProjectSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+
+  <!-- Only if the .NET Framework 4.8 developer pack is not installed -->
+  <ItemGroup Condition="'$(KochLocalBuild)' != 'true' And !Exists('$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8')">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Content Include="linkedin.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

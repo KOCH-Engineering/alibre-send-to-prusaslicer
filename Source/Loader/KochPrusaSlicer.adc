@@ -1,0 +1,10 @@
+<AlibreDesignAddOn specificationVersion="2" friendlyName="KOCH Send to PrusaSlicer">
+  <Author name="KOCH Engineering – Henrik J. Koch, Denmark" link="https://www.linkedin.com/in/henrikjkoch/"/>
+  <Copyright>(c) 2026 KOCH Engineering</Copyright>
+  <DLL type="Managed" loadedWhen="Startup" location="KochPrusaSlicer.dll"/>
+  <Icon location="SendToPrusaSlicer.ico"/>
+  <Menu text="PrusaSlicer"/>
+  <Description>Developed by KOCH Engineering (Henrik J. Koch, Denmark) with help from Claude (Anthropic). One click sends the open part - or every part of the open assembly as separate objects - to PrusaSlicer.</Description>
+  <Workspace type="Always"/>
+  <Property name="Identifier" value="{CD41C50A-D5D1-4801-B9A1-785DEF849D54}"/>
+</AlibreDesignAddOn>
