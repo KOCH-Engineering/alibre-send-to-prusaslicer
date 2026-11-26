@@ -40,7 +40,7 @@ Namespace KochPrusaSlicer
         Inherits Form
 
         Private ReadOnly _s As Settings
-        Private ReadOnly _path As New TextBox
+        Private ReadOnly _path As New ComboBox With {.DropDownStyle = ComboBoxStyle.DropDown}
         Private ReadOnly _found As New Label With {.ForeColor = Color.DimGray, .AutoSize = False, .AutoEllipsis = True}
         Private ReadOnly _copies As New CheckBox With {.Text = "One object per instance (4 identical bolts in the assembly = 4 objects)", .AutoSize = True}
         Private ReadOnly _sub As New CheckBox With {.Text = "Include parts in sub-assemblies", .AutoSize = True}
@@ -69,8 +69,24 @@ Namespace KochPrusaSlicer
 
             Dim y = 80
             Section("PrusaSlicer", y) : y += 26
-            _path.Location = New Point(20, y) : _path.Size = New Size(360, 24) : _path.Text = s.SlicerPath
+            _path.Location = New Point(20, y) : _path.Size = New Size(360, 24)
+            For Each p In SlicerLocator.FindAll()
+                _path.Items.Add(p)
+            Next
+            _path.Text = s.SlicerPath
             Controls.Add(_path)
+            ' show the version next to each path in the list
+            _path.DrawMode = DrawMode.OwnerDrawFixed
+            _path.DropDownWidth = 520
+            AddHandler _path.DrawItem, Sub(snd, ev)
+                                           ev.DrawBackground()
+                                           If ev.Index >= 0 Then
+                                               Dim it = CStr(_path.Items(ev.Index))
+                                               Dim v = SlicerLocator.VersionText(it)
+                                               TextRenderer.DrawText(ev.Graphics, v & If(SlicerLocator.IsPreRelease(it), "  (pre-release)", "") & "   –   " & it,
+                                                                     _path.Font, ev.Bounds, ev.ForeColor, TextFormatFlags.Left Or TextFormatFlags.VerticalCenter Or TextFormatFlags.EndEllipsis)
+                                           End If
+                                       End Sub
             Dim browse = Btn("Browse…", 388, y - 1, 74)
             AddHandler browse.Click, Sub()
                                          Dim p = SlicerLocator.Browse(Me, _path.Text)
@@ -89,6 +105,7 @@ Namespace KochPrusaSlicer
             _found.Location = New Point(20, y) : _found.Size = New Size(520, 18)
             Controls.Add(_found)
             AddHandler _path.TextChanged, Sub() UpdateFound()
+            AddHandler _path.SelectedIndexChanged, Sub() UpdateFound()
             UpdateFound()
 
             y += 34
@@ -135,10 +152,11 @@ Namespace KochPrusaSlicer
         Private Sub UpdateFound()
             Dim p = _path.Text.Trim()
             If p = "" Then
-                _found.Text = "Not set – it is searched for automatically the first time you send."
+                _found.Text = "Not set – the newest stable version found is used."
             ElseIf File.Exists(p) Then
                 Dim v = SlicerLocator.VersionText(p)
-                _found.Text = "✓ PrusaSlicer " & v
+                _found.Text = "✓ PrusaSlicer " & v & If(SlicerLocator.IsPreRelease(p), "  (pre-release)", "") &
+                              If(_path.Items.Count > 1, "   –   " & _path.Items.Count & " versions found, pick one in the list", "")
                 _found.ForeColor = Color.SeaGreen
                 Return
             Else

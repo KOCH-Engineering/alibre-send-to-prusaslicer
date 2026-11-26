@@ -25,8 +25,21 @@ Namespace KochPrusaSlicer
             Return found
         End Function
 
-        ''' <summary>Looks in the Windows uninstall list and the usual Program Files folders; newest version wins.</summary>
+        ''' <summary>The installation used when none is chosen: the newest stable version (alpha/beta/RC only if nothing else).</summary>
         Public Function Find() As String
+            Dim all = FindAll()
+            Dim stable = all.Where(Function(p) Not IsPreRelease(p)).FirstOrDefault()
+            Return If(stable, If(all.FirstOrDefault(), ""))
+        End Function
+
+        ''' <summary>True for alpha, beta and release-candidate builds.</summary>
+        Public Function IsPreRelease(p As String) As Boolean
+            Dim t = (VersionText(p) & " " & p).ToLowerInvariant()
+            Return t.Contains("alpha") OrElse t.Contains("beta") OrElse Text.RegularExpressions.Regex.IsMatch(t, "[^a-z]rc\d*")
+        End Function
+
+        ''' <summary>Every PrusaSlicer found (uninstall list, Program Files, %LOCALAPPDATA%\Programs), newest first.</summary>
+        Public Function FindAll() As List(Of String)
             Dim hits As New List(Of String)
             ' 1. Windows "Apps" list
             For Each hive In {RegistryHive.LocalMachine, RegistryHive.CurrentUser}
@@ -53,24 +66,24 @@ Namespace KochPrusaSlicer
                     End Try
                 Next
             Next
-            ' 2. Program Files
+            ' 2. Program Files (also "PrusaSlicer-3.0.0-alpha5" style folders)
             For Each pf In {Environment.GetEnvironmentVariable("ProgramW6432"), Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
                             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) & "\Programs"}
-                If String.IsNullOrEmpty(pf) Then Continue For
-                hits.Add(Path.Combine(pf, "PrusaSlicer", ExeName))
+                If String.IsNullOrEmpty(pf) OrElse Not Directory.Exists(pf) Then Continue For
                 Try
-                    Dim p3 = Path.Combine(pf, "Prusa3D")
-                    If Directory.Exists(p3) Then
-                        For Each d In Directory.GetDirectories(p3)
-                            hits.Add(Path.Combine(d, ExeName))
+                    For Each d In Directory.GetDirectories(pf, "*Prusa*")
+                        hits.Add(Path.Combine(d, ExeName))
+                        For Each d2 In Directory.GetDirectories(d)
+                            hits.Add(Path.Combine(d2, ExeName))
                         Next
-                    End If
+                    Next
                 Catch
                 End Try
             Next
-            Dim best = hits.Where(Function(h) File.Exists(h)).Distinct(StringComparer.OrdinalIgnoreCase).
-                            OrderByDescending(Function(h) FileVer(h)).FirstOrDefault()
-            Return If(best, "")
+            Return hits.Where(Function(h) File.Exists(h)).
+                        Select(Function(h) Path.GetFullPath(h)).
+                        Distinct(StringComparer.OrdinalIgnoreCase).
+                        OrderByDescending(Function(h) FileVer(h)).ToList()
         End Function
 
         Private Function FileVer(p As String) As Version
