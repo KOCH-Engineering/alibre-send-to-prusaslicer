@@ -19,12 +19,13 @@ SETTINGS  (Add-on > PrusaSlicer > Settings...)
 - Where PrusaSlicer is (found automatically)
 - One object per instance (4 identical bolts = 4 objects)
 - Include sub-assemblies, skip suppressed / hidden parts
-- Mesh quality from your Alibre STL export settings
-- Save the STL files in a temporary folder or a "Print" folder next to the model
+- File format: STL or STEP (AP214 / AP242 / AP203)
+- STL mesh quality from your Alibre STL export settings
+- Save the files in a temporary folder or a "Print" folder next to the model
 
 REQUIREMENTS
 - Alibre Design (64-bit), tested with version 29
-- PrusaSlicer 2.4 or newer
+- PrusaSlicer 2.4 or newer (needed for STEP)
 
 FILES
 - Add-on:   C:\ProgramData\Alibre AddOns\KochPrusaSlicer

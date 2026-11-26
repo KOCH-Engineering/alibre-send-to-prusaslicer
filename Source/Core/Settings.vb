@@ -13,8 +13,18 @@ Namespace KochPrusaSlicer
         Public Property SkipHidden As Boolean = False
         ''' <summary>Use the STL quality set in Alibre (File > Export settings); otherwise Alibre's default.</summary>
         Public Property UseAlibreStlSettings As Boolean = True
+        ''' <summary>"STL", "STEP AP214", "STEP AP242" or "STEP AP203" - PrusaSlicer opens both STL and STEP.</summary>
+        Public Property Format As String = "STL"
         ''' <summary>False = temporary folder, True = "Print" folder next to the model.</summary>
         Public Property ExportNextToModel As Boolean = False
+
+        Public Shared ReadOnly Formats As String() = {"STL", "STEP AP214", "STEP AP242", "STEP AP203"}
+
+        Public ReadOnly Property IsStep As Boolean
+            Get
+                Return Format.StartsWith("STEP")
+            End Get
+        End Property
 
         Public Shared ReadOnly Property Folder As String
             Get
@@ -45,6 +55,7 @@ Namespace KochPrusaSlicer
                 s.SkipHidden = Bool(d, "SkipHidden", s.SkipHidden)
                 s.UseAlibreStlSettings = Bool(d, "UseAlibreStlSettings", s.UseAlibreStlSettings)
                 s.ExportNextToModel = Bool(d, "ExportNextToModel", s.ExportNextToModel)
+                If d.TryGetValue("Format", v) AndAlso Formats.Contains(v) Then s.Format = v
             Catch ex As Exception
                 Plugin.Log("Reading settings failed: " & ex.Message)
             End Try
@@ -61,7 +72,8 @@ Namespace KochPrusaSlicer
                     "SkipSuppressed=" & B(SkipSuppressed),
                     "SkipHidden=" & B(SkipHidden),
                     "UseAlibreStlSettings=" & B(UseAlibreStlSettings),
-                    "ExportNextToModel=" & B(ExportNextToModel)})
+                    "ExportNextToModel=" & B(ExportNextToModel),
+                    "Format=" & Format})
             Catch ex As Exception
                 Plugin.Log("Saving settings failed: " & ex.Message)
             End Try

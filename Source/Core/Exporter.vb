@@ -1,4 +1,4 @@
-' KOCH Send to PrusaSlicer - exports the part, or every part of the assembly, to STL (AlibreX, late-bound)
+' KOCH Send to PrusaSlicer - exports the part, or every part of the assembly, to STL or STEP (AlibreX, late-bound)
 Imports System.Collections.Generic
 Imports System.IO
 Imports System.Linq
@@ -62,10 +62,16 @@ Namespace KochPrusaSlicer
                 used.TryGetValue(base, n)
                 used(base) = n + 1
                 If n > 0 Then base &= "_" & (n + 1)
-                Dim target = Path.Combine(r.Folder, base & ".stl")
+                Dim target = Path.Combine(r.Folder, base & If(s.IsStep, ".stp", ".stl"))
                 report?.Invoke(base, i, parts.Count)
                 Try
-                    If s.UseAlibreStlSettings Then
+                    If s.Format = "STEP AP214" Then
+                        p.Session.ExportAP214(target)
+                    ElseIf s.Format = "STEP AP242" Then
+                        p.Session.ExportAP242(target)
+                    ElseIf s.Format = "STEP AP203" Then
+                        p.Session.ExportAP203(target)
+                    ElseIf s.UseAlibreStlSettings Then
                         Try
                             p.Session.ExportSTL2(target)
                         Catch
@@ -85,7 +91,7 @@ Namespace KochPrusaSlicer
                     Plugin.Log("Export of " & base & " failed: " & ex.ToString())
                 End Try
             Next
-            Plugin.Log(String.Format("{0} '{1}': {2} parts exported to {3}, {4} objects, {5} skipped, {6} errors",
+            Plugin.Log(String.Format("{0} '{1}': {2} parts exported as " & s.Format & " to {3}, {4} objects, {5} skipped, {6} errors",
                                      kind, modelName, r.Exported, r.Folder, r.Files.Count, r.Skipped.Count, r.Errors.Count))
             Return r
         End Function
@@ -142,14 +148,16 @@ Namespace KochPrusaSlicer
             Return Path.Combine(Path.GetTempPath(), "KOCH PrusaSlicer", modelName)
         End Function
 
-        ''' <summary>Creates the folder and removes STL files from an earlier send, so old parts do not linger.</summary>
+        ''' <summary>Creates the folder and removes STL/STEP files from an earlier send, so old parts do not linger.</summary>
         Private Sub PrepareFolder(folder As String)
             Directory.CreateDirectory(folder)
-            For Each f In Directory.GetFiles(folder, "*.stl")
-                Try
-                    File.Delete(f)
-                Catch
-                End Try
+            For Each pattern In {"*.stl", "*.stp", "*.step"}
+                For Each f In Directory.GetFiles(folder, pattern)
+                    Try
+                        File.Delete(f)
+                    Catch
+                    End Try
+                Next
             Next
         End Sub
 

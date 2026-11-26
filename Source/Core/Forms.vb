@@ -46,8 +46,9 @@ Namespace KochPrusaSlicer
         Private ReadOnly _sub As New CheckBox With {.Text = "Include parts in sub-assemblies", .AutoSize = True}
         Private ReadOnly _supp As New CheckBox With {.Text = "Skip suppressed parts", .AutoSize = True}
         Private ReadOnly _hidden As New CheckBox With {.Text = "Skip hidden parts", .AutoSize = True}
-        Private ReadOnly _quality As New CheckBox With {.Text = "Use my STL export settings from Alibre (mesh quality)", .AutoSize = True}
-        Private ReadOnly _temp As New RadioButton With {.Text = "Temporary folder (cleaned up by Windows)", .AutoSize = True}
+        Private ReadOnly _format As New ComboBox With {.DropDownStyle = ComboBoxStyle.DropDownList, .Width = 150}
+        Private ReadOnly _quality As New CheckBox With {.Text = "STL: use my STL export settings from Alibre (mesh quality)", .AutoSize = True}
+        Private ReadOnly _temp As New RadioButton With {.Text = "Temporary folder", .AutoSize = True}
         Private ReadOnly _model As New RadioButton With {.Text = "A ""Print"" folder next to the model", .AutoSize = True}
 
         Private Shared ReadOnly Accent As Color = Color.FromArgb(&H18, &H5F, &HA5)
@@ -60,7 +61,7 @@ Namespace KochPrusaSlicer
             StartPosition = FormStartPosition.CenterParent
             BackColor = Color.White
             Font = New Font("Segoe UI", 9.0F)
-            ClientSize = New Size(560, 530)
+            ClientSize = New Size(560, 562)
 
             Controls.Add(New Label With {.Text = "Send to PrusaSlicer", .Font = New Font("Segoe UI", 13.0F, FontStyle.Bold),
                                          .Location = New Point(18, 16), .AutoSize = True})
@@ -97,8 +98,15 @@ Namespace KochPrusaSlicer
             Next
             y += 10
             Section("Export", y) : y += 26
+            Controls.Add(New Label With {.Text = "File format:", .Location = New Point(22, y + 3), .AutoSize = True})
+            _format.Items.AddRange(Settings.Formats)
+            _format.Location = New Point(110, y) : Controls.Add(_format)
+            Controls.Add(New Label With {.Text = "STEP: PrusaSlicer makes the mesh itself (smooth curves).", .ForeColor = Color.DimGray,
+                                         .Location = New Point(268, y + 3), .AutoSize = True})
+            y += 32
             _quality.Location = New Point(22, y) : Controls.Add(_quality) : y += 30
-            Controls.Add(New Label With {.Text = "Save the STL files in:", .Location = New Point(22, y), .AutoSize = True}) : y += 22
+            AddHandler _format.SelectedIndexChanged, Sub() _quality.Enabled = (CStr(_format.SelectedItem) = "STL")
+            Controls.Add(New Label With {.Text = "Save the files in:", .Location = New Point(22, y), .AutoSize = True}) : y += 22
             _temp.Location = New Point(36, y) : Controls.Add(_temp) : y += 24
             _model.Location = New Point(36, y) : Controls.Add(_model) : y += 24
 
@@ -107,6 +115,8 @@ Namespace KochPrusaSlicer
             _supp.Checked = s.SkipSuppressed
             _hidden.Checked = s.SkipHidden
             _quality.Checked = s.UseAlibreStlSettings
+            _format.SelectedItem = s.Format
+            _quality.Enabled = Not s.IsStep
             _model.Checked = s.ExportNextToModel
             _temp.Checked = Not s.ExportNextToModel
 
@@ -149,6 +159,7 @@ Namespace KochPrusaSlicer
             _s.SkipSuppressed = _supp.Checked
             _s.SkipHidden = _hidden.Checked
             _s.UseAlibreStlSettings = _quality.Checked
+            _s.Format = CStr(_format.SelectedItem)
             _s.ExportNextToModel = _model.Checked
             DialogResult = DialogResult.OK
         End Sub

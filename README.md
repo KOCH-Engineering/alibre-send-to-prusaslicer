@@ -6,6 +6,7 @@ One click in Alibre Design sends the open **part**, or **every part of the open 
 
 ## Features
 
+- **STL or STEP**, your choice. PrusaSlicer opens both; STEP gives PrusaSlicer the exact geometry.
 - **Part:** exports the part and opens it in PrusaSlicer.
 - **Assembly:** every part becomes its own object in PrusaSlicer, ready to place on the bed or to give each part its own extruder or filament (e.g. on a Prusa XL or INDX).
 - **One object per instance:** 4 identical bolts in the assembly give 4 objects (can be turned off).
@@ -28,7 +29,7 @@ Uninstall from **Windows Settings → Apps → KOCH Send to PrusaSlicer (Alibre 
 
 | Menu | What it does |
 |---|---|
-| **Send to PrusaSlicer** | Exports the active part or assembly to STL and opens it in PrusaSlicer |
+| **Send to PrusaSlicer** | Exports the active part or assembly to STL or STEP and opens it in PrusaSlicer |
 | **Settings…** | PrusaSlicer location, copies, sub-assemblies, suppressed/hidden parts, mesh quality and export folder |
 | **Reload add-on** | Loads a newly installed version without restarting Alibre |
 
@@ -41,10 +42,11 @@ Uninstall from **Windows Settings → Apps → KOCH Send to PrusaSlicer (Alibre 
 | Include parts in sub-assemblies | on | Parts inside sub-assemblies are sent too |
 | Skip suppressed parts | on | Suppressed parts and sub-assemblies are left out |
 | Skip hidden parts | off | Hidden parts are left out |
-| Use my STL export settings | on | Alibre's STL quality settings are used; off means Alibre's default |
-| Save the STL files in | Temporary folder | Or a `Print\<model>` folder next to the model, so the STL files are kept |
+| File format | STL | **STL** or **STEP** (AP214, AP242 or AP203). With STEP, PrusaSlicer builds the mesh itself, which gives smooth curves |
+| Use my STL export settings | on | STL only: Alibre's STL quality settings are used; off means Alibre's default |
+| Save the files in | Temporary folder | Or a `Print\<model>` folder next to the model, so the files are kept |
 
-Each send clears the STL files from the previous send of the same model, so you never get old parts.
+Each send clears the STL/STEP files from the previous send of the same model, so you never get old parts.
 
 ## Good to know
 
