@@ -1,6 +1,7 @@
 ' KOCH Send to PrusaSlicer - progress window and settings dialog
 Imports System.Drawing
 Imports System.IO
+Imports System.Linq
 Imports System.Windows.Forms
 
 Namespace KochPrusaSlicer
@@ -61,7 +62,7 @@ Namespace KochPrusaSlicer
             StartPosition = FormStartPosition.CenterParent
             BackColor = Color.White
             Font = New Font("Segoe UI", 9.0F)
-            ClientSize = New Size(560, 562)
+            ClientSize = New Size(560, 578)
 
             Controls.Add(New Label With {.Text = "Send to PrusaSlicer", .Font = New Font("Segoe UI", 13.0F, FontStyle.Bold),
                                          .Location = New Point(18, 16), .AutoSize = True})
@@ -70,7 +71,7 @@ Namespace KochPrusaSlicer
             Dim y = 80
             Section("PrusaSlicer", y) : y += 26
             _path.Location = New Point(20, y) : _path.Size = New Size(360, 24)
-            For Each p In SlicerLocator.FindAll()
+            For Each p In SlicerLocator.FindAll(s)
                 _path.Items.Add(p)
             Next
             _path.Text = s.SlicerPath
@@ -90,11 +91,15 @@ Namespace KochPrusaSlicer
             Dim browse = Btn("Browse…", 388, y - 1, 74)
             AddHandler browse.Click, Sub()
                                          Dim p = SlicerLocator.Browse(Me, _path.Text)
-                                         If p <> "" Then _path.Text = p
+                                         If p <> "" Then
+                                             _s.RememberSlicer(p)
+                                             If Not _path.Items.Contains(p) Then _path.Items.Add(p)
+                                             _path.Text = p
+                                         End If
                                      End Sub
             Dim find = Btn("Find", 468, y - 1, 72)
             AddHandler find.Click, Sub()
-                                       Dim p = SlicerLocator.Find()
+                                       Dim p = SlicerLocator.Find(_s)
                                        If p = "" Then
                                            MessageBox.Show(Me, "PrusaSlicer was not found. Use Browse… to point to prusa-slicer.exe.", Text)
                                        Else
@@ -137,8 +142,8 @@ Namespace KochPrusaSlicer
             _model.Checked = s.ExportNextToModel
             _temp.Checked = Not s.ExportNextToModel
 
-            Dim tip = New Label With {.Text = "Tip: in PrusaSlicer, tick Preferences › ""Allow just a single PrusaSlicer instance"" so new parts are added to the open window.",
-                                      .ForeColor = Color.DimGray, .Location = New Point(20, y + 8), .Size = New Size(520, 34)}
+            Dim tip = New Label With {.Text = "Tip: in PrusaSlicer, tick Preferences › ""Allow just a single PrusaSlicer instance"" so new parts are added to the open window. An unzipped PrusaSlicer (e.g. an alpha): use Browse… once – it stays in the list.",
+                                      .ForeColor = Color.DimGray, .Location = New Point(20, y + 8), .Size = New Size(520, 50)}
             Controls.Add(tip)
 
             Dim ok = Btn("OK", 372, ClientSize.Height - 44, 80)
@@ -172,6 +177,7 @@ Namespace KochPrusaSlicer
                 Return
             End If
             _s.SlicerPath = p
+            If p <> "" AndAlso Not SlicerLocator.FindAll().Contains(p, StringComparer.OrdinalIgnoreCase) Then _s.RememberSlicer(p)
             _s.CopyPerInstance = _copies.Checked
             _s.IncludeSubAssemblies = _sub.Checked
             _s.SkipSuppressed = _supp.Checked

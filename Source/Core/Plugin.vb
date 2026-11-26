@@ -63,6 +63,7 @@ Namespace KochPrusaSlicer
                 exe = SlicerLocator.Browse(owner, "")
                 If exe = "" Then Return
                 s.SlicerPath = exe
+                s.RememberSlicer(exe)
                 s.Save()
             End If
 

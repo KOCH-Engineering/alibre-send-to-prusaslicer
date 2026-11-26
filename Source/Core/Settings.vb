@@ -1,11 +1,14 @@
 ' KOCH Send to PrusaSlicer - settings (%APPDATA%\Koch Engineering\PrusaSlicer\settings.ini)
 Imports System.Collections.Generic
 Imports System.IO
+Imports System.Linq
 
 Namespace KochPrusaSlicer
 
     Public Class Settings
         Public Property SlicerPath As String = ""
+        ''' <summary>PrusaSlicer copies the user has pointed to with Browse (e.g. an unzipped alpha), ";"-separated.</summary>
+        Public Property ExtraSlicers As String = ""
         ''' <summary>One object in PrusaSlicer per instance in the assembly (4 bolts -> 4 objects).</summary>
         Public Property CopyPerInstance As Boolean = True
         Public Property IncludeSubAssemblies As Boolean = True
@@ -17,6 +20,14 @@ Namespace KochPrusaSlicer
         Public Property Format As String = "STL"
         ''' <summary>False = temporary folder, True = "Print" folder next to the model.</summary>
         Public Property ExportNextToModel As Boolean = False
+
+        ''' <summary>Remember a PrusaSlicer found by hand, so it stays in the list next to the installed ones.</summary>
+        Public Sub RememberSlicer(p As String)
+            If String.IsNullOrEmpty(p) Then Return
+            Dim list = ExtraSlicers.Split({";"c}, StringSplitOptions.RemoveEmptyEntries).ToList()
+            If Not list.Contains(p, StringComparer.OrdinalIgnoreCase) Then list.Add(p)
+            ExtraSlicers = String.Join(";", list)
+        End Sub
 
         Public Shared ReadOnly Formats As String() = {"STL", "STEP AP214", "STEP AP242", "STEP AP203"}
 
@@ -49,6 +60,7 @@ Namespace KochPrusaSlicer
                 Next
                 Dim v As String = Nothing
                 If d.TryGetValue("SlicerPath", v) Then s.SlicerPath = v
+                If d.TryGetValue("ExtraSlicers", v) Then s.ExtraSlicers = v
                 s.CopyPerInstance = Bool(d, "CopyPerInstance", s.CopyPerInstance)
                 s.IncludeSubAssemblies = Bool(d, "IncludeSubAssemblies", s.IncludeSubAssemblies)
                 s.SkipSuppressed = Bool(d, "SkipSuppressed", s.SkipSuppressed)
@@ -67,6 +79,7 @@ Namespace KochPrusaSlicer
                 Directory.CreateDirectory(Folder)
                 File.WriteAllLines(FilePath, {
                     "SlicerPath=" & SlicerPath,
+                    "ExtraSlicers=" & ExtraSlicers,
                     "CopyPerInstance=" & B(CopyPerInstance),
                     "IncludeSubAssemblies=" & B(IncludeSubAssemblies),
                     "SkipSuppressed=" & B(SkipSuppressed),

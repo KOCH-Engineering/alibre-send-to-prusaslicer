@@ -37,7 +37,7 @@ Uninstall from **Windows Settings → Apps → KOCH Send to PrusaSlicer (Alibre 
 
 | Setting | Default | Meaning |
 |---|---|---|
-| PrusaSlicer | newest stable version | All installed versions are listed with their version number, e.g. 2.9.7 and 3.0.0-alpha5. Without a choice, the newest **stable** version is used; alpha, beta and RC builds only if nothing else is installed. Use **Browse…** for a portable copy |
+| PrusaSlicer | newest stable version | All installed versions are listed with their version number, e.g. 2.9.7 and 3.0.0-alpha5. Without a choice, the newest **stable** version is used; alpha, beta and RC builds only if nothing else is installed. For a PrusaSlicer that is only unzipped (e.g. an alpha), use **Browse…** once; it then stays in the list |
 | One object per instance | on | 4 identical bolts give 4 objects. Off means one object per unique part |
 | Include parts in sub-assemblies | on | Parts inside sub-assemblies are sent too |
 | Skip suppressed parts | on | Suppressed parts and sub-assemblies are left out |

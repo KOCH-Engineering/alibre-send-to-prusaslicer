@@ -16,7 +16,7 @@ Namespace KochPrusaSlicer
         ''' <summary>The configured path if it still exists, otherwise an automatic search ("" if none).</summary>
         Public Function Resolve(s As Settings) As String
             If s.SlicerPath <> "" AndAlso File.Exists(s.SlicerPath) Then Return s.SlicerPath
-            Dim found = Find()
+            Dim found = Find(s)
             If found <> "" Then
                 s.SlicerPath = found
                 s.Save()
@@ -26,8 +26,8 @@ Namespace KochPrusaSlicer
         End Function
 
         ''' <summary>The installation used when none is chosen: the newest stable version (alpha/beta/RC only if nothing else).</summary>
-        Public Function Find() As String
-            Dim all = FindAll()
+        Public Function Find(Optional s As Settings = Nothing) As String
+            Dim all = FindAll(s)
             Dim stable = all.Where(Function(p) Not IsPreRelease(p)).FirstOrDefault()
             Return If(stable, If(all.FirstOrDefault(), ""))
         End Function
@@ -39,8 +39,10 @@ Namespace KochPrusaSlicer
         End Function
 
         ''' <summary>Every PrusaSlicer found (uninstall list, Program Files, %LOCALAPPDATA%\Programs), newest first.</summary>
-        Public Function FindAll() As List(Of String)
+        Public Function FindAll(Optional s As Settings = Nothing) As List(Of String)
             Dim hits As New List(Of String)
+            ' 0. copies the user pointed to (e.g. an unzipped alpha)
+            If s IsNot Nothing Then hits.AddRange(s.ExtraSlicers.Split({";"c}, StringSplitOptions.RemoveEmptyEntries))
             ' 1. Windows "Apps" list
             For Each hive In {RegistryHive.LocalMachine, RegistryHive.CurrentUser}
                 For Each view In {RegistryView.Registry64, RegistryView.Registry32}
