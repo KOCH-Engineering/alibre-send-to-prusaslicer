@@ -61,8 +61,11 @@ Namespace KochPrusaSlicer
                     samples += 1
                     If samples > 1 AndAlso busy > 150 Then sawBusy = True
                     Dim h = p.MainWindowHandle
-                    ' quiet = under 10 % of one core for two samples, and no dialog open (main window enabled)
-                    If busy < 50 AndAlso h <> IntPtr.Zero AndAlso IsWindowEnabled(h) Then quiet += 1 Else quiet = 0
+                    Dim enabled = h <> IntPtr.Zero AndAlso IsWindowEnabled(h)
+                    ' quiet = under ~25 % of one core for two samples, and no dialog open (main window enabled)
+                    If busy < 120 AndAlso enabled Then quiet += 1 Else quiet = 0
+                    If samples Mod 4 = 0 Then Plugin.Log(String.Format("Arrange: pid {0}, window {1}, enabled {2}, cpu {3:0} ms/0.5 s, seen busy {4}",
+                                                                         p.Id, h <> IntPtr.Zero, enabled, busy, sawBusy))
                     ' only after PrusaSlicer has actually been busy loading (or after 8 s, for very small parts)
                     If quiet >= 2 AndAlso samples > 2 AndAlso (sawBusy OrElse (DateTime.Now - started).TotalSeconds > 8) Then
                         If IsIconic(h) Then ShowWindow(h, 9)
