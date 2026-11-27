@@ -57,7 +57,7 @@ Namespace KochPrusaSlicer
             End Try
         End Function
 
-        ''' <summary>PrusaSlicer's icon, slightly smaller towards the top left, with the KOCH arrow bottom right.</summary>
+        ''' <summary>PrusaSlicer's icon, slightly smaller towards the top right, with the KOCH arrow bottom left pointing into it.</summary>
         Private Function Compose(src As Bitmap, size As Integer) As Bitmap
             Dim b As New Bitmap(size, size, PixelFormat.Format32bppArgb)
             Using g = Graphics.FromImage(b)
@@ -65,9 +65,9 @@ Namespace KochPrusaSlicer
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic
                 g.PixelOffsetMode = PixelOffsetMode.HighQuality
                 Dim k = size / 1024.0F
-                g.DrawImage(src, 0, 0, 900 * k, 900 * k)
-                ' the common arrow (same shape as on Export Parts)
-                Dim x0 = 470 * k, y0 = 590 * k, w = 540 * k, h = 400 * k
+                g.DrawImage(src, 124 * k, 0, 900 * k, 900 * k)
+                ' the common arrow (same shape as on Export Parts), bottom left, pointing INTO the slicer
+                Dim x0 = 14 * k, y0 = 590 * k, w = 540 * k, h = 400 * k
                 Dim sh = h * 0.44F, head = w * 0.46F
                 Dim pts = {New PointF(x0, y0 + h / 2 - sh / 2), New PointF(x0 + w - head, y0 + h / 2 - sh / 2), New PointF(x0 + w - head, y0),
                            New PointF(x0 + w, y0 + h / 2), New PointF(x0 + w - head, y0 + h), New PointF(x0 + w - head, y0 + h / 2 + sh / 2),
