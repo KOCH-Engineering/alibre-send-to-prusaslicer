@@ -58,6 +58,12 @@ if ($quick) {
 Copy-Item (Join-Path $LoaderOut 'KochPrusaSlicer.dll') $InstallDir -Force
 Copy-Item (Join-Path $LoaderOut 'KochPrusaSlicer.adc') $InstallDir -Force
 Copy-Item (Join-Path $LoaderOut 'SendToPrusaSlicer.ico') $InstallDir -Force
+# Ribbon icon: the PrusaSlicer icon on this PC + the KOCH arrow (keeps our own icon if PrusaSlicer is not found)
+try {
+    Add-Type -Path (Join-Path $InstallDir 'KochPrusaSlicer.Core.dll')
+    $iconErr = [KochPrusaSlicer.IconMaker]::Build((Join-Path $InstallDir 'SendToPrusaSlicer.ico'), '')
+    if ($iconErr) { Write-Host "Using the add-on's own icon ($iconErr)" } else { Write-Host 'Icon made from your PrusaSlicer' }
+} catch { Write-Host "Using the add-on's own icon ($($_.Exception.Message))" }
 
 Write-Host 'Registering the add-on with Alibre...' -ForegroundColor Cyan
 $key = 'HKLM:\SOFTWARE\Alibre Design Add-Ons'

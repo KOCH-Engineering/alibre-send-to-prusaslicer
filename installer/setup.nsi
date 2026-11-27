@@ -100,6 +100,9 @@ Section "Install"
   File "README.txt"
   File "/oname=LICENSE.txt" "..\LICENSE"
 
+  ; Ribbon icon from the PrusaSlicer on this PC + the KOCH arrow (our own icon stays if PrusaSlicer is not found)
+  nsExec::ExecToLog `powershell -NoProfile -ExecutionPolicy Bypass -Command "Add-Type -Path '$INSTDIR\KochPrusaSlicer.Core.dll'; [KochPrusaSlicer.IconMaker]::Build('$INSTDIR\SendToPrusaSlicer.ico', '')"`
+
   ; Register the add-on with Alibre
   WriteRegStr HKLM "SOFTWARE\Alibre Design Add-Ons" "${ADDONID}" "$INSTDIR"
 
