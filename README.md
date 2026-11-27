@@ -1,3 +1,5 @@
+![banner](docs/banner.png)
+
 # KOCH Send to PrusaSlicer – for Alibre Design
 
 **Developed by [KOCH Engineering](https://www.linkedin.com/in/henrikjkoch/) (Henrik J. Koch, Denmark), with a lot of help from Claude (Anthropic).**
