@@ -4,6 +4,8 @@
 
 **Developed by [KOCH Engineering](https://www.linkedin.com/in/henrikjkoch/) (Henrik J. Koch, Denmark), with a lot of help from Claude (Anthropic).**
 
+💬 **Questions, ideas or bugs?** Join the discussion in the [Alibre forum](https://www.alibre.com/forum/index.php?threads/three-free-add-ons-for-alibre-design-%E2%80%93-export-parts-send-to-prusaslicer-3dconnexion-keys.27260/) or open a GitHub issue.
+
 One click in Alibre Design sends the open **part**, or **every part of the open assembly as separate objects**, straight to **PrusaSlicer**. You no longer need to export STL files one by one and drag them in.
 
 ## Features
