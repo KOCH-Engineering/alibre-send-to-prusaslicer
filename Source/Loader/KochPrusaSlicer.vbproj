@@ -9,7 +9,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <OptionStrict>Off</OptionStrict>
     <OptionInfer>On</OptionInfer>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Product>KOCH Send to PrusaSlicer (KOCH Engineering)</Product>
     <AssemblyTitle>KOCH Send to PrusaSlicer</AssemblyTitle>
     <Authors>KOCH Engineering</Authors>

@@ -12,7 +12,7 @@ Unicode true
 !include "LogicLib.nsh"
 
 !define APPNAME   "KOCH Send to PrusaSlicer (Alibre add-on)"
-!define VERSION   "0.1.0"
+!define VERSION   "0.2.0"
 !define PUBLISHER "KOCH Engineering"
 !define ADDONID   "{CD41C50A-D5D1-4801-B9A1-785DEF849D54}"
 !define UNINSTKEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\KochPrusaSlicer"

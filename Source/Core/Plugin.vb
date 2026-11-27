@@ -39,6 +39,12 @@ Namespace KochPrusaSlicer
             Log("Core " & Version & " loaded")
         End Sub
 
+        Public Sub ShowAbout(owner As IWin32Window)
+            Using f As New AboutForm()
+                f.ShowDialog(owner)
+            End Using
+        End Sub
+
         Public Sub ShowSettings(owner As IWin32Window)
             Dim s = Settings.Load()
             Using f As New SettingsForm(s)

@@ -49,6 +49,7 @@ Namespace AlibreAddOnAssembly
         Private Const CMD_SEND As Integer = 6101
         Private Const CMD_SETTINGS As Integer = 6102
         Private Const CMD_RELOAD As Integer = 6103
+        Private Const CMD_ABOUT As Integer = 6104
         Private Const TITLE As String = "Send to PrusaSlicer"
 
         Private ReadOnly _root As IADRoot
@@ -126,7 +127,7 @@ Namespace AlibreAddOnAssembly
 
         Public Function SubMenuItems(menuId As Integer) As Array Implements IAlibreAddOn.SubMenuItems
             If menuId <> ROOT_ID Then Return Nothing
-            Return New Integer() {CMD_SEND, CMD_SETTINGS, CMD_RELOAD}
+            Return New Integer() {CMD_SEND, CMD_SETTINGS, CMD_ABOUT, CMD_RELOAD}
         End Function
 
         Public Function MenuItemText(menuId As Integer) As String Implements IAlibreAddOn.MenuItemText
@@ -134,6 +135,7 @@ Namespace AlibreAddOnAssembly
                 Case ROOT_ID : Return "PrusaSlicer"
                 Case CMD_SEND : Return "Send to PrusaSlicer"
                 Case CMD_SETTINGS : Return "Settings…"
+                Case CMD_ABOUT : Return "About…"
                 Case CMD_RELOAD : Return "Reload add-on"
                 Case Else : Return String.Empty
             End Select
@@ -143,6 +145,7 @@ Namespace AlibreAddOnAssembly
             Select Case menuId
                 Case CMD_SEND : Return "Export the open part - or every part of the open assembly - and open them in PrusaSlicer"
                 Case CMD_SETTINGS : Return "PrusaSlicer location, copies, suppressed/hidden parts and export folder"
+                Case CMD_ABOUT : Return "KOCH Engineering · Henrik J. Koch · Denmark"
                 Case CMD_RELOAD : Return "Load a newly installed version without restarting Alibre Design"
                 Case Else : Return "KOCH Send to PrusaSlicer"
             End Select
@@ -181,6 +184,7 @@ Namespace AlibreAddOnAssembly
                 Select Case menuId
                     Case CMD_SEND : _core.Send(owner, ResolveSession(sessionIdentifier))
                     Case CMD_SETTINGS : _core.ShowSettings(owner)
+                    Case CMD_ABOUT : _core.ShowAbout(owner)
                 End Select
             Catch ex As Exception
                 Log.Write("Command " & menuId & " failed: " & ex.ToString())
