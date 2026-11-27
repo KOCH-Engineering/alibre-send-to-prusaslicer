@@ -43,6 +43,7 @@ Namespace KochPrusaSlicer
         Private ReadOnly _s As Settings
         Private ReadOnly _path As New ComboBox With {.DropDownStyle = ComboBoxStyle.DropDown}
         Private ReadOnly _found As New Label With {.ForeColor = Color.DimGray, .AutoSize = False, .AutoEllipsis = True}
+        Private ReadOnly _arrange As New CheckBox With {.Text = "Arrange the parts on the bed when they are loaded (presses A in PrusaSlicer)", .AutoSize = True}
         Private ReadOnly _copies As New CheckBox With {.Text = "One object per instance (4 identical bolts in the assembly = 4 objects)", .AutoSize = True}
         Private ReadOnly _sub As New CheckBox With {.Text = "Include parts in sub-assemblies", .AutoSize = True}
         Private ReadOnly _supp As New CheckBox With {.Text = "Skip suppressed parts", .AutoSize = True}
@@ -62,7 +63,7 @@ Namespace KochPrusaSlicer
             StartPosition = FormStartPosition.CenterParent
             BackColor = Color.White
             Font = New Font("Segoe UI", 9.0F)
-            ClientSize = New Size(560, 578)
+            ClientSize = New Size(560, 602)
 
             Controls.Add(New Label With {.Text = "Send to PrusaSlicer", .Font = New Font("Segoe UI", 13.0F, FontStyle.Bold),
                                          .Location = New Point(18, 16), .AutoSize = True})
@@ -113,6 +114,8 @@ Namespace KochPrusaSlicer
             AddHandler _path.SelectedIndexChanged, Sub() UpdateFound()
             UpdateFound()
 
+            y += 24
+            _arrange.Location = New Point(22, y) : Controls.Add(_arrange)
             y += 34
             Section("Assemblies", y) : y += 26
             For Each cb In {_copies, _sub, _supp, _hidden}
@@ -133,6 +136,7 @@ Namespace KochPrusaSlicer
             _model.Location = New Point(36, y) : Controls.Add(_model) : y += 24
 
             _copies.Checked = s.CopyPerInstance
+            _arrange.Checked = s.ArrangeAfterLoad
             _sub.Checked = s.IncludeSubAssemblies
             _supp.Checked = s.SkipSuppressed
             _hidden.Checked = s.SkipHidden
@@ -179,6 +183,7 @@ Namespace KochPrusaSlicer
             _s.SlicerPath = p
             If p <> "" AndAlso Not SlicerLocator.FindAll().Contains(p, StringComparer.OrdinalIgnoreCase) Then _s.RememberSlicer(p)
             _s.CopyPerInstance = _copies.Checked
+            _s.ArrangeAfterLoad = _arrange.Checked
             _s.IncludeSubAssemblies = _sub.Checked
             _s.SkipSuppressed = _supp.Checked
             _s.SkipHidden = _hidden.Checked

@@ -11,6 +11,8 @@ Namespace KochPrusaSlicer
         Public Property ExtraSlicers As String = ""
         ''' <summary>One object in PrusaSlicer per instance in the assembly (4 bolts -> 4 objects).</summary>
         Public Property CopyPerInstance As Boolean = True
+        ''' <summary>Press A (Arrange) in PrusaSlicer when the parts are loaded, so they do not lie on top of each other.</summary>
+        Public Property ArrangeAfterLoad As Boolean = True
         Public Property IncludeSubAssemblies As Boolean = True
         Public Property SkipSuppressed As Boolean = True
         Public Property SkipHidden As Boolean = False
@@ -62,6 +64,7 @@ Namespace KochPrusaSlicer
                 If d.TryGetValue("SlicerPath", v) Then s.SlicerPath = v
                 If d.TryGetValue("ExtraSlicers", v) Then s.ExtraSlicers = v
                 s.CopyPerInstance = Bool(d, "CopyPerInstance", s.CopyPerInstance)
+                s.ArrangeAfterLoad = Bool(d, "ArrangeAfterLoad", s.ArrangeAfterLoad)
                 s.IncludeSubAssemblies = Bool(d, "IncludeSubAssemblies", s.IncludeSubAssemblies)
                 s.SkipSuppressed = Bool(d, "SkipSuppressed", s.SkipSuppressed)
                 s.SkipHidden = Bool(d, "SkipHidden", s.SkipHidden)
@@ -81,6 +84,7 @@ Namespace KochPrusaSlicer
                     "SlicerPath=" & SlicerPath,
                     "ExtraSlicers=" & ExtraSlicers,
                     "CopyPerInstance=" & B(CopyPerInstance),
+                    "ArrangeAfterLoad=" & B(ArrangeAfterLoad),
                     "IncludeSubAssemblies=" & B(IncludeSubAssemblies),
                     "SkipSuppressed=" & B(SkipSuppressed),
                     "SkipHidden=" & B(SkipHidden),

@@ -12,6 +12,7 @@ One click in Alibre Design sends the open **part**, or **every part of the open 
 - **One object per instance:** 4 identical bolts in the assembly give 4 objects (can be turned off).
 - **Same rules as Export Parts:** sub-assemblies are included, suppressed parts are skipped, and hidden parts can be skipped too.
 - **Mesh quality** follows your own STL export settings in Alibre.
+- **Arranged on the bed:** when more than one object is sent, the add-on presses **A** (Arrange) in PrusaSlicer once loading has finished, so the parts don't lie on top of each other (can be turned off).
 - **Uses the open PrusaSlicer:** the parts are added to the PrusaSlicer window you already have open (`--single-instance`), or PrusaSlicer is started.
 - **Finds PrusaSlicer automatically.** With several versions installed (e.g. 2.9.7 and a 3.0 alpha), it picks the newest stable one by default, and you can choose another in Settings.
 
@@ -38,6 +39,7 @@ Uninstall from **Windows Settings → Apps → KOCH Send to PrusaSlicer (Alibre 
 | Setting | Default | Meaning |
 |---|---|---|
 | PrusaSlicer | newest stable version | All installed versions are listed with their version number, e.g. 2.9.7 and 3.0.0-alpha5. Without a choice, the newest **stable** version is used; alpha, beta and RC builds only if nothing else is installed. For a PrusaSlicer that is only unzipped (e.g. an alpha), use **Browse…** once; it then stays in the list |
+| Arrange the parts on the bed | on | With more than one object, **A** (Arrange) is pressed in PrusaSlicer when loading is done. If PrusaSlicer asks a question first (e.g. multi-part object), it waits until you've answered |
 | One object per instance | on | 4 identical bolts give 4 objects. Off means one object per unique part |
 | Include parts in sub-assemblies | on | Parts inside sub-assemblies are sent too |
 | Skip suppressed parts | on | Suppressed parts and sub-assemblies are left out |

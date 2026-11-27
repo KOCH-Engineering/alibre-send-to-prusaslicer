@@ -85,6 +85,7 @@ Namespace KochPrusaSlicer
             ' 3. Open in PrusaSlicer (one object per file argument)
             Try
                 SlicerLocator.Open(exe, result.Files)
+                If s.ArrangeAfterLoad AndAlso result.Files.Count > 1 Then Arranger.ArrangeWhenLoaded(exe, result.Files.Count)
                 Log("Sent " & result.Files.Count & " objects (" & result.Exported & " files) to " & exe)
             Catch ex As Exception
                 Log("Starting PrusaSlicer failed: " & ex.ToString())
