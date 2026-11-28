@@ -8,7 +8,7 @@
     <OptionStrict>Off</OptionStrict>
     <OptionInfer>On</OptionInfer>
     <OptionExplicit>On</OptionExplicit>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Product>KOCH Send to PrusaSlicer (KOCH Engineering)</Product>
     <AssemblyTitle>KOCH Send to PrusaSlicer core</AssemblyTitle>
     <Company>KOCH Engineering</Company>

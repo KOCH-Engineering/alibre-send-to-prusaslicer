@@ -15,7 +15,7 @@ Namespace KochPrusaSlicer
     Public Class Plugin
         Implements IDisposable
 
-        Public Const Title As String = "Send to PrusaSlicer"
+        Public Const Title As String = "Send to Slicer"
         Public Shared Property AddOnFolder As String = ""
         Private Shared _log As Action(Of String)
 
@@ -63,7 +63,7 @@ Namespace KochPrusaSlicer
             ' 1. PrusaSlicer
             Dim exe = SlicerLocator.Resolve(s)
             If exe = "" Then
-                If MessageBox.Show(owner, "PrusaSlicer was not found on this computer." & vbCrLf & vbCrLf &
+                If MessageBox.Show(owner, "No slicer (PrusaSlicer, Bambu Studio or OrcaSlicer) was found on this computer." & vbCrLf & vbCrLf &
                                    "Do you want to point to prusa-slicer.exe yourself?", Title,
                                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) <> DialogResult.Yes Then Return
                 exe = SlicerLocator.Browse(owner, "")
@@ -94,14 +94,14 @@ Namespace KochPrusaSlicer
                 If s.ArrangeAfterLoad AndAlso result.Files.Count > 1 Then Arranger.ArrangeWhenLoaded(exe, result.Files.Count)
                 Log("Sent " & result.Files.Count & " objects (" & result.Exported & " files) to " & exe)
             Catch ex As Exception
-                Log("Starting PrusaSlicer failed: " & ex.ToString())
-                MessageBox.Show(owner, "Could not start PrusaSlicer:" & vbCrLf & exe & vbCrLf & vbCrLf & ex.Message, Title,
+                Log("Starting the slicer failed: " & ex.ToString())
+                MessageBox.Show(owner, "Could not start the slicer:" & vbCrLf & exe & vbCrLf & vbCrLf & ex.Message, Title,
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 Return
             End Try
 
             If result.Errors.Count > 0 Then
-                MessageBox.Show(owner, result.Exported & " parts were sent to PrusaSlicer, but " & result.Errors.Count & " failed:" & vbCrLf & vbCrLf &
+                MessageBox.Show(owner, result.Exported & " parts were sent to the slicer, but " & result.Errors.Count & " failed:" & vbCrLf & vbCrLf &
                                 String.Join(vbCrLf, result.Errors.Take(15)), Title, MessageBoxButtons.OK, MessageBoxIcon.Warning)
             End If
         End Sub

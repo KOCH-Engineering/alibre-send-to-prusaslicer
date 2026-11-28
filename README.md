@@ -1,15 +1,16 @@
 ![banner](docs/banner.png)
 
-# KOCH Send to PrusaSlicer – for Alibre Design
+# KOCH Send to Slicer – for Alibre Design
 
 **Developed by [KOCH Engineering](https://www.linkedin.com/in/henrikjkoch/) (Henrik J. Koch, Denmark), with a lot of help from Claude (Anthropic).**
 
 💬 **Questions, ideas or bugs?** Join the discussion in the [Alibre forum](https://www.alibre.com/forum/index.php?threads/three-free-add-ons-for-alibre-design-%E2%80%93-export-parts-send-to-prusaslicer-3dconnexion-keys.27260/) or open a GitHub issue.
 
-One click in Alibre Design sends the open **part**, or **every part of the open assembly as separate objects**, straight to **PrusaSlicer**. You no longer need to export STL files one by one and drag them in.
+One click in Alibre Design sends the open **part**, or **every part of the open assembly as separate objects**, straight to **PrusaSlicer**, **Bambu Studio** or **OrcaSlicer**. You no longer need to export STL files one by one and drag them in.
 
 ## Features
 
+- **Three slicers:** PrusaSlicer, Bambu Studio and OrcaSlicer. Bambu Studio is built on PrusaSlicer and OrcaSlicer on Bambu Studio, so they work the same way.
 - **STL or STEP**, your choice. PrusaSlicer opens both; STEP gives PrusaSlicer the exact geometry.
 - **Part:** exports the part and opens it in PrusaSlicer.
 - **Assembly:** every part becomes its own object in PrusaSlicer, ready to place on the bed or to give each part its own extruder or filament (e.g. on a Prusa XL or INDX).
@@ -18,23 +19,23 @@ One click in Alibre Design sends the open **part**, or **every part of the open 
 - **Mesh quality** follows your own STL export settings in Alibre.
 - **Arranged on the bed:** when more than one object is sent, the add-on presses **A** (Arrange) in PrusaSlicer once loading has finished, so the parts don't lie on top of each other (can be turned off).
 - **Uses the open PrusaSlicer:** the parts are added to the PrusaSlicer window you already have open (`--single-instance`), or PrusaSlicer is started.
-- **Finds PrusaSlicer automatically.** With several versions installed (e.g. 2.9.7 and a 3.0 alpha), it picks the newest stable one by default, and you can choose another in Settings.
+- **Finds your slicers automatically**, including unzipped/portable copies (from running programs, Windows' list of programs that have run, "Open with" associations and typical folders). Alpha, beta, RC and nightly builds are marked *pre-release*. Without a choice, the newest stable PrusaSlicer is used, then Bambu Studio, then OrcaSlicer; your choice is remembered.
 
 ## Install
 
 1. Download `KOCH-Send-to-PrusaSlicer-Setup-x.y.z.zip` from **[Releases](../../releases)** and unzip it.
 2. Close Alibre Design and run the `.exe`. The installer is not code-signed; if Windows SmartScreen warns you, click **More info → Run anyway**.
-3. Start Alibre Design. You'll find **Add-on → PrusaSlicer → Send to PrusaSlicer**.
+3. Start Alibre Design. You'll find **Add-on → Slicer → Send to slicer**.
 
-**Tip:** in PrusaSlicer, tick **Preferences → "Allow just a single PrusaSlicer instance"**. New parts then go into the window you already have open.
+**Tip:** turn on the slicer's *only one instance* preference (PrusaSlicer: **Preferences → "Allow just a single PrusaSlicer instance"**). New parts then go into the window you already have open. PrusaSlicer is also started with `--single-instance`.
 
-Uninstall from **Windows Settings → Apps → KOCH Send to PrusaSlicer (Alibre add-on)**.
+Uninstall from **Windows Settings → Apps → KOCH Send to Slicer (Alibre add-on)**.
 
 ## Use
 
 | Menu | What it does |
 |---|---|
-| **Send to PrusaSlicer** | Exports the active part or assembly to STL or STEP and opens it in PrusaSlicer |
+| **Send to slicer** | Exports the active part or assembly to STL or STEP and opens it in your slicer |
 | **Settings…** | PrusaSlicer location, copies, sub-assemblies, suppressed/hidden parts, mesh quality and export folder |
 | **Reload add-on** | Loads a newly installed version without restarting Alibre |
 

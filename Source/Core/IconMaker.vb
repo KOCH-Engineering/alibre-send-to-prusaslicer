@@ -25,7 +25,7 @@ Namespace KochPrusaSlicer
         Public Function Build(outIco As String, Optional slicerExe As String = "") As String
             Try
                 If slicerExe = "" Then slicerExe = SlicerLocator.Find()
-                If slicerExe = "" OrElse Not File.Exists(slicerExe) Then Return "PrusaSlicer not found"
+                If slicerExe = "" OrElse Not File.Exists(slicerExe) Then Return "no slicer found"
                 Using src = Extract(slicerExe, 256)
                     If src Is Nothing Then Return "No icon in " & slicerExe
                     Dim sizes = {16, 20, 24, 32, 40, 48, 64, 128, 256}

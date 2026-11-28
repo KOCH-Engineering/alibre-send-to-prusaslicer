@@ -72,16 +72,16 @@ Namespace KochPrusaSlicer
                         SetForegroundWindow(h)
                         Thread.Sleep(300)
                         If GetForegroundWindow() <> h Then
-                            Plugin.Log("Arrange: could not bring PrusaSlicer to the front - press A yourself")
+                            Plugin.Log("Arrange: could not bring the slicer to the front - press A yourself")
                             Return
                         End If
                         keybd_event(VK_A, 0, 0, UIntPtr.Zero)
                         keybd_event(VK_A, 0, KEYUP, UIntPtr.Zero)
-                        Plugin.Log("Arrange: pressed A in PrusaSlicer")
+                        Plugin.Log("Arrange: pressed A in the slicer")
                         Return
                     End If
                 Loop
-                Plugin.Log("Arrange: PrusaSlicer did not become ready in time")
+                Plugin.Log("Arrange: the slicer did not become ready in time")
             Catch ex As Exception
                 Plugin.Log("Arrange failed: " & ex.Message)
             End Try

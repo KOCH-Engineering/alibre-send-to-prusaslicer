@@ -43,7 +43,7 @@ Namespace KochPrusaSlicer
         Private ReadOnly _s As Settings
         Private ReadOnly _path As New ComboBox With {.DropDownStyle = ComboBoxStyle.DropDown}
         Private ReadOnly _found As New Label With {.ForeColor = Color.DimGray, .AutoSize = False, .AutoEllipsis = True}
-        Private ReadOnly _arrange As New CheckBox With {.Text = "Arrange the parts on the bed when they are loaded (presses A in PrusaSlicer)", .AutoSize = True}
+        Private ReadOnly _arrange As New CheckBox With {.Text = "Arrange the parts on the bed when they are loaded (presses A in the slicer)", .AutoSize = True}
         Private ReadOnly _copies As New CheckBox With {.Text = "One object per instance (4 identical bolts in the assembly = 4 objects)", .AutoSize = True}
         Private ReadOnly _sub As New CheckBox With {.Text = "Include parts in sub-assemblies", .AutoSize = True}
         Private ReadOnly _supp As New CheckBox With {.Text = "Skip suppressed parts", .AutoSize = True}
@@ -57,7 +57,7 @@ Namespace KochPrusaSlicer
 
         Public Sub New(s As Settings)
             _s = s
-            Text = "Send to PrusaSlicer – Settings"
+            Text = "Send to Slicer – Settings"
             FormBorderStyle = FormBorderStyle.FixedDialog
             MaximizeBox = False : MinimizeBox = False : ShowInTaskbar = False
             StartPosition = FormStartPosition.CenterParent
@@ -65,12 +65,12 @@ Namespace KochPrusaSlicer
             Font = New Font("Segoe UI", 9.0F)
             ClientSize = New Size(560, 602)
 
-            Controls.Add(New Label With {.Text = "Send to PrusaSlicer", .Font = New Font("Segoe UI", 13.0F, FontStyle.Bold),
+            Controls.Add(New Label With {.Text = "Send to Slicer", .Font = New Font("Segoe UI", 13.0F, FontStyle.Bold),
                                          .Location = New Point(18, 16), .AutoSize = True})
             Credits()
 
             Dim y = 80
-            Section("PrusaSlicer", y) : y += 26
+            Section("Slicer – PrusaSlicer, Bambu Studio or OrcaSlicer", y) : y += 26
             _path.Location = New Point(20, y) : _path.Size = New Size(360, 24)
             For Each p In SlicerLocator.FindAll(s)
                 _path.Items.Add(p)
@@ -85,7 +85,7 @@ Namespace KochPrusaSlicer
                                            If ev.Index >= 0 Then
                                                Dim it = CStr(_path.Items(ev.Index))
                                                Dim v = SlicerLocator.VersionText(it)
-                                               TextRenderer.DrawText(ev.Graphics, v & If(SlicerLocator.IsPreRelease(it), "  (pre-release)", "") & "   –   " & it,
+                                               TextRenderer.DrawText(ev.Graphics, SlicerLocator.Describe(it) & "   –   " & it,
                                                                      _path.Font, ev.Bounds, ev.ForeColor, TextFormatFlags.Left Or TextFormatFlags.VerticalCenter Or TextFormatFlags.EndEllipsis)
                                            End If
                                        End Sub
@@ -102,7 +102,7 @@ Namespace KochPrusaSlicer
             AddHandler find.Click, Sub()
                                        Dim p = SlicerLocator.Find(_s)
                                        If p = "" Then
-                                           MessageBox.Show(Me, "PrusaSlicer was not found. Use Browse… to point to prusa-slicer.exe.", Text)
+                                           MessageBox.Show(Me, "No slicer was found. Use Browse… to point to prusa-slicer.exe, bambu-studio.exe or orca-slicer.exe.", Text)
                                        Else
                                            _path.Text = p
                                        End If
@@ -126,7 +126,7 @@ Namespace KochPrusaSlicer
             Controls.Add(New Label With {.Text = "File format:", .Location = New Point(22, y + 3), .AutoSize = True})
             _format.Items.AddRange(Settings.Formats)
             _format.Location = New Point(110, y) : Controls.Add(_format)
-            Controls.Add(New Label With {.Text = "STEP: PrusaSlicer makes the mesh itself (smooth curves).", .ForeColor = Color.DimGray,
+            Controls.Add(New Label With {.Text = "STEP: the slicer makes the mesh itself (smooth curves).", .ForeColor = Color.DimGray,
                                          .Location = New Point(268, y + 3), .AutoSize = True})
             y += 32
             _quality.Location = New Point(22, y) : Controls.Add(_quality) : y += 30
@@ -146,8 +146,7 @@ Namespace KochPrusaSlicer
             _model.Checked = s.ExportNextToModel
             _temp.Checked = Not s.ExportNextToModel
 
-            Dim tip = New Label With {.Text = "Tip: in PrusaSlicer, tick Preferences › ""Allow just a single PrusaSlicer instance"" so new parts are added to the open window. An unzipped PrusaSlicer (e.g. an alpha): use Browse… once – it stays in the list.",
-                                      .ForeColor = Color.DimGray, .Location = New Point(20, y + 8), .Size = New Size(520, 50)}
+            Dim tip = New Label With {.Text = "Tip: turn on the slicer's ""only one instance"" preference so new parts are added to the open window. Unzipped/portable copies are found automatically once they have run – or use Browse… once.", .ForeColor = Color.DimGray, .Location = New Point(20, y + 8), .Size = New Size(520, 50)}
             Controls.Add(tip)
 
             Dim ok = Btn("OK", 372, ClientSize.Height - 44, 80)
@@ -164,8 +163,8 @@ Namespace KochPrusaSlicer
                 _found.Text = "Not set – the newest stable version found is used."
             ElseIf File.Exists(p) Then
                 Dim v = SlicerLocator.VersionText(p)
-                _found.Text = "✓ PrusaSlicer " & v & If(SlicerLocator.IsPreRelease(p), "  (pre-release)", "") &
-                              If(_path.Items.Count > 1, "   –   " & _path.Items.Count & " versions found, pick one in the list", "")
+                _found.Text = "✓ " & SlicerLocator.Describe(p) &
+                              If(_path.Items.Count > 1, "   –   " & _path.Items.Count & " slicers found, pick one in the list", "")
                 _found.ForeColor = Color.SeaGreen
                 Return
             Else
