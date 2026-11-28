@@ -2,7 +2,7 @@
 # Easiest: double-click install.cmd. Requires the .NET SDK.
 #
 # If Alibre Design is running, only the core is updated (no restart needed):
-# then click Add-on > PrusaSlicer > Reload add-on in Alibre.
+# then click Add-on > Slicer > Reload add-on in Alibre.
 
 $ErrorActionPreference = 'Stop'
 
@@ -51,7 +51,7 @@ Copy-Item (Join-Path $CoreOut 'linkedin.png') $InstallDir -Force
 if ($quick) {
     Write-Host ''
     Write-Host 'Alibre Design is running: the core was updated.' -ForegroundColor Green
-    Write-Host 'In Alibre click  Add-on > PrusaSlicer > Reload add-on  to use it.' -ForegroundColor Green
+    Write-Host 'In Alibre click  Add-on > Slicer > Reload add-on  to use it.' -ForegroundColor Green
     exit 0
 }
 
@@ -62,7 +62,7 @@ Copy-Item (Join-Path $LoaderOut 'SendToPrusaSlicer.ico') $InstallDir -Force
 try {
     Add-Type -Path (Join-Path $InstallDir 'KochPrusaSlicer.Core.dll')
     $iconErr = [KochPrusaSlicer.IconMaker]::Build((Join-Path $InstallDir 'SendToPrusaSlicer.ico'), '')
-    if ($iconErr) { Write-Host "Using the add-on's own icon ($iconErr)" } else { Write-Host 'Icon made from your PrusaSlicer' }
+    if ($iconErr) { Write-Host "Using the add-on's own icon ($iconErr)" } else { Write-Host 'Icon made from your slicer' }
 } catch { Write-Host "Using the add-on's own icon ($($_.Exception.Message))" }
 
 Write-Host 'Registering the add-on with Alibre...' -ForegroundColor Cyan
@@ -71,4 +71,4 @@ if (-not (Test-Path $key)) { New-Item -Path $key -Force | Out-Null }
 New-ItemProperty -Path $key -Name $AddOnId -Value $InstallDir -PropertyType String -Force | Out-Null
 
 Write-Host ''
-Write-Host 'Done. Start Alibre Design and click  Add-on > PrusaSlicer > Send to PrusaSlicer' -ForegroundColor Green
+Write-Host 'Done. Start Alibre Design and click  Add-on > Slicer > Send to slicer' -ForegroundColor Green
