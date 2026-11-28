@@ -1,4 +1,4 @@
-![banner](docs/banner.png)
+![banner](docs/banner-send-to-slicer.png)
 
 # KOCH Send to Slicer – for Alibre Design
 
