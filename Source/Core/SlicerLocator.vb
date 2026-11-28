@@ -25,11 +25,18 @@ Namespace KochPrusaSlicer
 
         ' ---------------------------------------------------------------- describing an exe
 
+        ' 0 = PrusaSlicer, 1 = Bambu Studio, 2 = OrcaSlicer, -1 = not a slicer. Accepts renamed exes too
+        ' (e.g. "PrusaSlicer.exe" in an alpha zip) but not the G-code viewer, console or installer helpers.
         Public Function KindIndex(p As String) As Integer
-            Dim f = Path.GetFileName(If(p, ""))
+            Dim f = Path.GetFileName(If(p, "")).ToLowerInvariant()
             For i = 0 To Kinds.Length - 1
-                If String.Equals(f, Kinds(i).Exe, StringComparison.OrdinalIgnoreCase) Then Return i
+                If f = Kinds(i).Exe Then Return i
             Next
+            If Not f.EndsWith(".exe") OrElse f.Contains("gcode") OrElse f.Contains("viewer") OrElse f.Contains("console") OrElse
+               f.Contains("unins") OrElse f.Contains("setup") OrElse f.Contains("install") Then Return -1
+            If f.Contains("prusa") Then Return 0
+            If f.Contains("bambu") Then Return 1
+            If f.Contains("orca") Then Return 2
             Return -1
         End Function
 
@@ -186,13 +193,21 @@ Namespace KochPrusaSlicer
 
         ' 3. a slicer that is running right now
         Private Sub FromRunning(hits As List(Of String))
-            For Each kind In Kinds
-                For Each p In Process.GetProcessesByName(Path.GetFileNameWithoutExtension(kind.Exe))
-                    Try
-                        hits.Add(p.MainModule.FileName)
-                    Catch
-                    End Try
-                Next
+            For Each p In Process.GetProcesses()
+                Try
+                    Dim n = p.ProcessName.ToLowerInvariant()
+                    Dim title = If(p.MainWindowTitle, "")
+                    If n.Contains("prusa") OrElse n.Contains("bambu") OrElse n.Contains("orca") OrElse
+                       title.IndexOf("PrusaSlicer", StringComparison.OrdinalIgnoreCase) >= 0 OrElse
+                       title.IndexOf("Bambu Studio", StringComparison.OrdinalIgnoreCase) >= 0 OrElse
+                       title.IndexOf("OrcaSlicer", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                        Dim f = p.MainModule.FileName
+                        Plugin.Log("Find: running " & p.ProcessName & " (" & title & ") -> " & f)
+                        hits.Add(f)
+                    End If
+                Catch ex As Exception
+                    Plugin.Log("Find: could not read process " & p.ProcessName & ": " & ex.Message)
+                End Try
             Next
         End Sub
 
