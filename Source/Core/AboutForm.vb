@@ -8,7 +8,7 @@ Namespace KochPrusaSlicer
         Inherits Form
 
         Private Const LinkedIn As String = "https://www.linkedin.com/in/henrikjkoch/"
-        Private Const GitHub As String = "https://github.com/KOCH-Engineering/alibre-send-to-prusaslicer"
+        Private Const GitHub As String = "https://github.com/KOCH-Engineering/alibre-send-to-slicer"
 
         Public Sub New()
             Text = "About"

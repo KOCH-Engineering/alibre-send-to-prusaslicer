@@ -12,13 +12,13 @@ Unicode true
 !include "LogicLib.nsh"
 
 !define APPNAME   "KOCH Send to Slicer (Alibre add-on)"
-!define VERSION   "0.3.0"
+!define VERSION   "0.3.5"
 !define PUBLISHER "KOCH Engineering"
 !define ADDONID   "{CD41C50A-D5D1-4801-B9A1-785DEF849D54}"
 !define UNINSTKEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\KochPrusaSlicer"
 
 Name "${APPNAME}"
-OutFile "KOCH-Send-to-PrusaSlicer-Setup-${VERSION}.exe"
+OutFile "KOCH-Send-to-Slicer-Setup-${VERSION}.exe"
 RequestExecutionLevel admin
 SetCompressor /SOLID lzma
 BrandingText "${PUBLISHER} - Henrik J. Koch, Denmark"
@@ -115,7 +115,7 @@ Section "Install"
   WriteRegStr HKLM "${UNINSTKEY}" "DisplayName" "${APPNAME}"
   WriteRegStr HKLM "${UNINSTKEY}" "DisplayVersion" "${VERSION}"
   WriteRegStr HKLM "${UNINSTKEY}" "Publisher" "${PUBLISHER}"
-  WriteRegStr HKLM "${UNINSTKEY}" "URLInfoAbout" "https://github.com/KOCH-Engineering/alibre-send-to-prusaslicer"
+  WriteRegStr HKLM "${UNINSTKEY}" "URLInfoAbout" "https://github.com/KOCH-Engineering/alibre-send-to-slicer"
   WriteRegStr HKLM "${UNINSTKEY}" "DisplayIcon" "$INSTDIR\SendToPrusaSlicer.ico"
   WriteRegStr HKLM "${UNINSTKEY}" "InstallLocation" "$INSTDIR"
   WriteRegStr HKLM "${UNINSTKEY}" "UninstallString" '"$INSTDIR\Uninstall.exe"'
