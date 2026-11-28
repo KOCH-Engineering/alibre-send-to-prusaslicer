@@ -64,7 +64,7 @@ Namespace KochPrusaSlicer
                     Dim enabled = h <> IntPtr.Zero AndAlso IsWindowEnabled(h)
                     ' quiet = under ~25 % of one core for two samples, and no dialog open (main window enabled)
                     If busy < 120 AndAlso enabled Then quiet += 1 Else quiet = 0
-                    If samples Mod 4 = 0 Then Plugin.Log(String.Format("Arrange: pid {0}, window {1}, enabled {2}, cpu {3:0} ms/0.5 s, seen busy {4}",
+                    If samples <= 3 OrElse samples Mod 4 = 0 Then Plugin.Log(String.Format("Arrange: pid {0}, window {1}, enabled {2}, cpu {3:0} ms/0.5 s, seen busy {4}",
                                                                          p.Id, h <> IntPtr.Zero, enabled, busy, sawBusy))
                     ' only after PrusaSlicer has actually been busy loading (or after 8 s, for very small parts)
                     If quiet >= 2 AndAlso samples > 2 AndAlso (sawBusy OrElse (DateTime.Now - started).TotalSeconds > 8) Then
@@ -75,9 +75,18 @@ Namespace KochPrusaSlicer
                             Plugin.Log("Arrange: could not bring the slicer to the front - press A yourself")
                             Return
                         End If
-                        keybd_event(VK_A, 0, 0, UIntPtr.Zero)
-                        keybd_event(VK_A, 0, KEYUP, UIntPtr.Zero)
-                        Plugin.Log("Arrange: pressed A in the slicer")
+                        ' send A straight to the 3D view, so it works even if keyboard focus is in the object list
+                        Dim canvas = FindCanvas(h)
+                        If canvas <> IntPtr.Zero Then
+                            PostMessage(canvas, WM_KEYDOWN, New IntPtr(VK_A), New IntPtr(1))
+                            PostMessage(canvas, WM_CHAR, New IntPtr(AscW("a"c)), New IntPtr(1))
+                            PostMessage(canvas, WM_KEYUP, New IntPtr(VK_A), New IntPtr(&HC0000001))
+                            Plugin.Log("Arrange: sent A to the 3D view (" & ClassOf(canvas) & ") after " & CInt((DateTime.Now - started).TotalSeconds) & " s")
+                        Else
+                            keybd_event(VK_A, 0, 0, UIntPtr.Zero)
+                            keybd_event(VK_A, 0, KEYUP, UIntPtr.Zero)
+                            Plugin.Log("Arrange: pressed A in the slicer window (3D view not found) after " & CInt((DateTime.Now - started).TotalSeconds) & " s")
+                        End If
                         Return
                     End If
                 Loop
@@ -86,6 +95,46 @@ Namespace KochPrusaSlicer
                 Plugin.Log("Arrange failed: " & ex.Message)
             End Try
         End Sub
+
+        <DllImport("user32.dll")> Private Function PostMessage(h As IntPtr, msg As UInteger, wp As IntPtr, lp As IntPtr) As Boolean
+        End Function
+        Private Delegate Function EnumProc(h As IntPtr, l As IntPtr) As Boolean
+        <DllImport("user32.dll")> Private Function EnumChildWindows(parent As IntPtr, cb As EnumProc, l As IntPtr) As Boolean
+        End Function
+        <DllImport("user32.dll", CharSet:=CharSet.Unicode)> Private Function GetClassName(h As IntPtr, sb As StringBuilder, n As Integer) As Integer
+        End Function
+        <DllImport("user32.dll")> Private Function IsWindowVisible(h As IntPtr) As Boolean
+        End Function
+        <DllImport("user32.dll")> Private Function GetWindowRect(h As IntPtr, ByRef r As RECT) As Boolean
+        End Function
+        <StructLayout(LayoutKind.Sequential)> Private Structure RECT
+            Public Left, Top, Right, Bottom As Integer
+        End Structure
+        Private Const WM_KEYDOWN As UInteger = &H100, WM_KEYUP As UInteger = &H101, WM_CHAR As UInteger = &H102
+
+        Private Function ClassOf(h As IntPtr) As String
+            Dim sb As New StringBuilder(256)
+            GetClassName(h, sb, sb.Capacity)
+            Return sb.ToString()
+        End Function
+
+        ''' <summary>The OpenGL 3D view: a child window whose class mentions GLCanvas, else the largest visible child.</summary>
+        Private Function FindCanvas(main As IntPtr) As IntPtr
+            Dim gl = IntPtr.Zero, biggest = IntPtr.Zero
+            Dim bigArea = 0L
+            EnumChildWindows(main, Function(ch, l)
+                                       If Not IsWindowVisible(ch) Then Return True
+                                       Dim c = ClassOf(ch)
+                                       If gl = IntPtr.Zero AndAlso c.IndexOf("GLCanvas", StringComparison.OrdinalIgnoreCase) >= 0 Then gl = ch
+                                       Dim r As RECT
+                                       If GetWindowRect(ch, r) Then
+                                           Dim a = CLng(r.Right - r.Left) * (r.Bottom - r.Top)
+                                           If a > bigArea Then bigArea = a : biggest = ch
+                                       End If
+                                       Return True
+                                   End Function, IntPtr.Zero)
+            Return If(gl <> IntPtr.Zero, gl, biggest)
+        End Function
 
         ''' <summary>The running PrusaSlicer with a main window (the one started from this exe if it can tell).</summary>
         Private Function FindSlicer(exe As String) As Process
