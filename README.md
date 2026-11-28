@@ -21,6 +21,8 @@ One click in Alibre Design sends the open **part**, or **every part of the open 
 - **Uses the open PrusaSlicer:** the parts are added to the PrusaSlicer window you already have open (`--single-instance`), or PrusaSlicer is started.
 - **Finds your slicers automatically**, including unzipped/portable copies (from running programs, Windows' list of programs that have run, "Open with" associations and typical folders). Alpha, beta, RC and nightly builds are marked *pre-release*. Without a choice, the newest stable PrusaSlicer is used, then Bambu Studio, then OrcaSlicer; your choice is remembered.
 
+📖 **[User guide](docs/USER-GUIDE.md)**: choosing your slicer, alpha/beta versions, all settings and troubleshooting.
+
 ## Install
 
 1. Download `KOCH-Send-to-PrusaSlicer-Setup-x.y.z.zip` from **[Releases](../../releases)** and unzip it.
