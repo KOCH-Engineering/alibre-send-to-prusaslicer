@@ -268,9 +268,13 @@ Namespace KochPrusaSlicer
         End Sub
 
         Private Sub AddExesIn(dir As String, hits As List(Of String))
-            For Each kind In Kinds
-                hits.Add(Path.Combine(dir, kind.Exe))
-            Next
+            Try
+                ' any slicer exe in the folder - also renamed ones such as "PrusaSlicer.exe" in an alpha zip
+                For Each f In Directory.GetFiles(dir, "*.exe")
+                    If KindIndex(f) >= 0 Then hits.Add(f)
+                Next
+            Catch
+            End Try
         End Sub
 
         Private Function FileVer(p As String) As Version
