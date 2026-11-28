@@ -37,6 +37,12 @@ Namespace KochPrusaSlicer
             AddOnFolder = installFolder
             _log = logIt
             Log("Core " & Version & " loaded")
+            ' keep the ribbon icon in step with the chosen slicer (takes effect at the next Alibre start)
+            Try
+                Dim s = Settings.Load()
+                If s.SlicerPath <> "" AndAlso Not String.Equals(s.SlicerPath, s.IconFor, StringComparison.OrdinalIgnoreCase) Then IconMaker.UpdateRibbonIcon(s)
+            Catch
+            End Try
         End Sub
 
         Public Sub ShowAbout(owner As IWin32Window)
@@ -48,8 +54,16 @@ Namespace KochPrusaSlicer
         Public Sub ShowSettings(owner As IWin32Window)
             Dim s = Settings.Load()
             Using f As New SettingsForm(s)
-                If f.ShowDialog(owner) = DialogResult.OK Then s.Save()
+                If f.ShowDialog(owner) <> DialogResult.OK Then Return
             End Using
+            s.Save()
+            If Not String.Equals(s.SlicerPath, s.IconFor, StringComparison.OrdinalIgnoreCase) Then
+                Dim name = If(s.SlicerPath = "", "the default slicer", SlicerLocator.SlicerName(s.SlicerPath))
+                If IconMaker.UpdateRibbonIcon(s) Then
+                    MessageBox.Show(owner, "The Slicer button will show the " & name & " logo the next time Alibre Design starts." & vbCrLf &
+                                    "(The About window shows it right away.)", Title, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                End If
+            End If
         End Sub
 
         ''' <summary>The main command: export the part(s) of the session and open them in PrusaSlicer.</summary>

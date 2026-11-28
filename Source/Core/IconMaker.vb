@@ -21,11 +21,24 @@ Namespace KochPrusaSlicer
         <DllImport("user32.dll")> Private Function DestroyIcon(h As IntPtr) As Boolean
         End Function
 
-        ''' <summary>Writes outIco from the PrusaSlicer icon + orange arrow. Returns "" or an error text.</summary>
+        Public Const RibbonIcon As String = "SendToPrusaSlicer.ico"        ' the file the .adc points to
+        Public Const DefaultIcon As String = "SendToSlicer-default.ico"    ' our own printer icon
+
+        ''' <summary>
+        ''' Writes outIco from the chosen slicer's icon + the orange arrow (the user's choice in Settings, otherwise the
+        ''' default slicer). With no slicer, our own printer icon is used. Returns "" or an error text.
+        ''' </summary>
         Public Function Build(outIco As String, Optional slicerExe As String = "") As String
             Try
-                If slicerExe = "" Then slicerExe = SlicerLocator.Find()
-                If slicerExe = "" OrElse Not File.Exists(slicerExe) Then Return "no slicer found"
+                If slicerExe = "" Then
+                    Dim s = Settings.Load()
+                    slicerExe = If(s.SlicerPath <> "" AndAlso File.Exists(s.SlicerPath), s.SlicerPath, SlicerLocator.Find(s))
+                End If
+                If slicerExe = "" OrElse Not File.Exists(slicerExe) Then
+                    Dim def = Path.Combine(Path.GetDirectoryName(outIco), DefaultIcon)
+                    If File.Exists(def) Then File.Copy(def, outIco, True)
+                    Return "no slicer found"
+                End If
                 Using src = Extract(slicerExe, 256)
                     If src Is Nothing Then Return "No icon in " & slicerExe
                     Dim sizes = {16, 20, 24, 32, 40, 48, 64, 128, 256}
@@ -42,6 +55,37 @@ Namespace KochPrusaSlicer
             Catch ex As Exception
                 Return ex.Message
             End Try
+        End Function
+
+        ''' <summary>The same picture as a bitmap (for the About window) - Nothing if the slicer has no icon.</summary>
+        Public Function Preview(slicerExe As String, size As Integer) As Bitmap
+            Try
+                If slicerExe = "" OrElse Not File.Exists(slicerExe) Then Return Nothing
+                Using src = Extract(slicerExe, 256)
+                    If src Is Nothing Then Return Nothing
+                    Return Compose(src, size)
+                End Using
+            Catch
+                Return Nothing
+            End Try
+        End Function
+
+        ''' <summary>
+        ''' Rebuilds the ribbon icon for the chosen slicer. The installer gives users write access to that one file;
+        ''' Alibre reads it at start-up, so the button changes the next time Alibre starts.
+        ''' </summary>
+        Public Function UpdateRibbonIcon(s As Settings) As Boolean
+            Dim target = Path.Combine(Plugin.AddOnFolder, RibbonIcon)
+            Dim exe = If(s.SlicerPath <> "" AndAlso File.Exists(s.SlicerPath), s.SlicerPath, "")
+            Dim err = Build(target, exe)
+            If err = "" OrElse err = "no slicer found" Then
+                s.IconFor = exe
+                s.Save()
+                Plugin.Log("Ribbon icon updated for " & If(exe = "", "(no slicer)", SlicerLocator.Describe(exe)))
+                Return True
+            End If
+            Plugin.Log("Could not update the ribbon icon: " & err)
+            Return False
         End Function
 
         Private Function Extract(exe As String, size As Integer) As Bitmap

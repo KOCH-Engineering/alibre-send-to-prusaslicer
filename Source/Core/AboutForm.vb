@@ -21,13 +21,19 @@ Namespace KochPrusaSlicer
 
             Dim y = 18
             Try
-                Dim ico = IO.Path.Combine(Plugin.AddOnFolder, "SendToPrusaSlicer.ico")
-                If IO.File.Exists(ico) Then
-                    Using i As New Icon(ico, 64, 64)
-                        Dim pb As New PictureBox With {.Image = i.ToBitmap(), .SizeMode = PictureBoxSizeMode.CenterImage,
-                                                       .Size = New Size(64, 64), .Location = New Point((ClientSize.Width - 64) \ 2, y)}
-                        Controls.Add(pb)
-                    End Using
+                ' the chosen slicer's logo + arrow, drawn now (so it follows Settings at once); else the icon file
+                Dim img As Image = IconMaker.Preview(SlicerLocator.Resolve(Settings.Load()), 64)
+                If img Is Nothing Then
+                    Dim ico = IO.Path.Combine(Plugin.AddOnFolder, IconMaker.RibbonIcon)
+                    If IO.File.Exists(ico) Then
+                        Using i As New Icon(ico, 64, 64)
+                            img = i.ToBitmap()
+                        End Using
+                    End If
+                End If
+                If img IsNot Nothing Then
+                    Controls.Add(New PictureBox With {.Image = img, .SizeMode = PictureBoxSizeMode.CenterImage,
+                                                      .Size = New Size(64, 64), .Location = New Point((ClientSize.Width - 64) \ 2, y)})
                     y += 72
                 End If
             Catch

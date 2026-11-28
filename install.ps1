@@ -58,12 +58,15 @@ if ($quick) {
 Copy-Item (Join-Path $LoaderOut 'KochPrusaSlicer.dll') $InstallDir -Force
 Copy-Item (Join-Path $LoaderOut 'KochPrusaSlicer.adc') $InstallDir -Force
 Copy-Item (Join-Path $LoaderOut 'SendToPrusaSlicer.ico') $InstallDir -Force
-# Ribbon icon: the PrusaSlicer icon on this PC + the KOCH arrow (keeps our own icon if PrusaSlicer is not found)
+Copy-Item (Join-Path $LoaderOut 'SendToPrusaSlicer.ico') (Join-Path $InstallDir 'SendToSlicer-default.ico') -Force
+# Ribbon icon: the chosen slicer's icon + the KOCH arrow (our own icon if no slicer is found).
+# Users may rewrite this one file, so the add-on can follow a new choice in Settings.
 try {
     Add-Type -Path (Join-Path $InstallDir 'KochPrusaSlicer.Core.dll')
     $iconErr = [KochPrusaSlicer.IconMaker]::Build((Join-Path $InstallDir 'SendToPrusaSlicer.ico'), '')
     if ($iconErr) { Write-Host "Using the add-on's own icon ($iconErr)" } else { Write-Host 'Icon made from your slicer' }
 } catch { Write-Host "Using the add-on's own icon ($($_.Exception.Message))" }
+& icacls (Join-Path $InstallDir 'SendToPrusaSlicer.ico') /grant '*S-1-5-32-545:M' | Out-Null
 
 Write-Host 'Registering the add-on with Alibre...' -ForegroundColor Cyan
 $key = 'HKLM:\SOFTWARE\Alibre Design Add-Ons'

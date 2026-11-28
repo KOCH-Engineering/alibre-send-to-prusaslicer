@@ -95,6 +95,7 @@ Section "Install"
   File "${LOADER}\KochPrusaSlicer.dll"
   File "${LOADER}\KochPrusaSlicer.adc"
   File "${LOADER}\SendToPrusaSlicer.ico"
+  File "/oname=SendToSlicer-default.ico" "${LOADER}\SendToPrusaSlicer.ico"
   File "${CORE}\KochPrusaSlicer.Core.dll"
   File "${CORE}\linkedin.png"
   File "README.txt"
@@ -102,6 +103,9 @@ Section "Install"
 
   ; Ribbon icon from the PrusaSlicer on this PC + the KOCH arrow (our own icon stays if PrusaSlicer is not found)
   nsExec::ExecToLog `powershell -NoProfile -ExecutionPolicy Bypass -Command "Add-Type -Path '$INSTDIR\KochPrusaSlicer.Core.dll'; [KochPrusaSlicer.IconMaker]::Build('$INSTDIR\SendToPrusaSlicer.ico', '')"`
+
+  ; users may rewrite the ribbon icon, so it can follow the slicer chosen in Settings
+  nsExec::ExecToLog 'icacls "$INSTDIR\SendToPrusaSlicer.ico" /grant *S-1-5-32-545:M'
 
   ; Register the add-on with Alibre
   WriteRegStr HKLM "SOFTWARE\Alibre Design Add-Ons" "${ADDONID}" "$INSTDIR"
@@ -129,6 +133,7 @@ Section "Uninstall"
   Delete "$INSTDIR\KochPrusaSlicer.Core.dll"
   Delete "$INSTDIR\KochPrusaSlicer.adc"
   Delete "$INSTDIR\SendToPrusaSlicer.ico"
+  Delete "$INSTDIR\SendToSlicer-default.ico"
   Delete "$INSTDIR\linkedin.png"
   Delete "$INSTDIR\README.txt"
   Delete "$INSTDIR\LICENSE.txt"

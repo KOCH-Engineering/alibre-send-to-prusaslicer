@@ -42,12 +42,14 @@ Namespace KochPrusaSlicer
             Return KindIndex(p) = 0
         End Function
 
+        ''' <summary>"2.9.7" or "3.0.0-alpha5" - just the version, even when the exe says "PrusaSlicer-2.9.7".</summary>
         Public Function VersionText(p As String) As String
             Try
                 Dim fv = FileVersionInfo.GetVersionInfo(p)
                 Dim v = If(fv.ProductVersion, "").Trim()
-                If v = "" Then v = fv.FileVersion
-                Return If(v, "")
+                If v = "" Then v = If(fv.FileVersion, "")
+                Dim m = Regex.Match(v, "\d+(\.\d+)+([-+ ]?(alpha|beta|rc|dev|nightly)[\w.]*)?", RegexOptions.IgnoreCase)
+                Return If(m.Success, m.Value, v)
             Catch
                 Return ""
             End Try
@@ -55,9 +57,10 @@ Namespace KochPrusaSlicer
 
         ''' <summary>True for alpha, beta, RC, nightly and dev builds - by version text, product name or folder name.</summary>
         Public Function IsPreRelease(p As String) As Boolean
-            Dim t = VersionText(p) & " " & Path.GetDirectoryName(p)
+            Dim t = Path.GetDirectoryName(p)
             Try
-                t &= " " & FileVersionInfo.GetVersionInfo(p).ProductName
+                Dim fv = FileVersionInfo.GetVersionInfo(p)
+                t &= " " & fv.ProductVersion & " " & fv.FileVersion & " " & fv.ProductName
             Catch
             End Try
             Return Regex.IsMatch(t.ToLowerInvariant(), "alpha|beta|nightly|(^|[^a-z])dev([^a-z]|$)|(^|[^a-z])rc\d*([^a-z]|$)")

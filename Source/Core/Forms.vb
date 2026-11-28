@@ -100,12 +100,22 @@ Namespace KochPrusaSlicer
                                      End Sub
             Dim find = Btn("Find", 468, y - 1, 72)
             AddHandler find.Click, Sub()
-                                       Dim p = SlicerLocator.Find(_s)
-                                       If p = "" Then
+                                       ' search again (also picks up a slicer that is running right now) and refill the list
+                                       Dim cur = _path.Text
+                                       Dim all = SlicerLocator.FindAll(_s)
+                                       _path.Items.Clear()
+                                       For Each x In all
+                                           _path.Items.Add(x)
+                                       Next
+                                       If all.Count = 0 Then
                                            MessageBox.Show(Me, "No slicer was found. Use Browse… to point to prusa-slicer.exe, bambu-studio.exe or orca-slicer.exe.", Text)
-                                       Else
-                                           _path.Text = p
+                                           Return
                                        End If
+                                       _path.Text = If(cur <> "" AndAlso IO.File.Exists(cur), cur, SlicerLocator.Find(_s))
+                                       MessageBox.Show(Me, all.Count & " slicer(s) found:" & vbCrLf & vbCrLf &
+                                                       String.Join(vbCrLf, all.Select(Function(x) "• " & SlicerLocator.Describe(x) & vbCrLf & "   " & x)) &
+                                                       vbCrLf & vbCrLf & "Pick the one to use in the list.", Text)
+                                       _path.DroppedDown = True
                                    End Sub
             y += 30
             _found.Location = New Point(20, y) : _found.Size = New Size(520, 18)

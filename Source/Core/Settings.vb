@@ -9,6 +9,8 @@ Namespace KochPrusaSlicer
         Public Property SlicerPath As String = ""
         ''' <summary>PrusaSlicer copies the user has pointed to with Browse (e.g. an unzipped alpha), ";"-separated.</summary>
         Public Property ExtraSlicers As String = ""
+        ''' <summary>The slicer the ribbon icon was last made from.</summary>
+        Public Property IconFor As String = ""
         ''' <summary>One object in PrusaSlicer per instance in the assembly (4 bolts -> 4 objects).</summary>
         Public Property CopyPerInstance As Boolean = True
         ''' <summary>Press A (Arrange) in PrusaSlicer when the parts are loaded, so they do not lie on top of each other.</summary>
@@ -63,6 +65,7 @@ Namespace KochPrusaSlicer
                 Dim v As String = Nothing
                 If d.TryGetValue("SlicerPath", v) Then s.SlicerPath = v
                 If d.TryGetValue("ExtraSlicers", v) Then s.ExtraSlicers = v
+                If d.TryGetValue("IconFor", v) Then s.IconFor = v
                 s.CopyPerInstance = Bool(d, "CopyPerInstance", s.CopyPerInstance)
                 s.ArrangeAfterLoad = Bool(d, "ArrangeAfterLoad", s.ArrangeAfterLoad)
                 s.IncludeSubAssemblies = Bool(d, "IncludeSubAssemblies", s.IncludeSubAssemblies)
@@ -83,6 +86,7 @@ Namespace KochPrusaSlicer
                 File.WriteAllLines(FilePath, {
                     "SlicerPath=" & SlicerPath,
                     "ExtraSlicers=" & ExtraSlicers,
+                    "IconFor=" & IconFor,
                     "CopyPerInstance=" & B(CopyPerInstance),
                     "ArrangeAfterLoad=" & B(ArrangeAfterLoad),
                     "IncludeSubAssemblies=" & B(IncludeSubAssemblies),
