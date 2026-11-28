@@ -81,3 +81,7 @@ With the .NET SDK installed, close Alibre and double-click `install.cmd`. Later 
 MIT, © 2026 KOCH Engineering. See [LICENSE](LICENSE).
 
 Alibre and Alibre Design are trademarks of Alibre, LLC. PrusaSlicer is a trademark of Prusa Research a.s. LinkedIn is a trademark of LinkedIn Corporation. This project is not affiliated with or endorsed by these companies.
+
+## Support
+
+This project is free and open source. If it saves you time and you'd like to say thanks, you can [buy me a coffee ☕](https://buymeacoffee.com/henrikkoch) – thank you!

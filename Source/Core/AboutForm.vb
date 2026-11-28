@@ -47,6 +47,7 @@ Namespace KochPrusaSlicer
             y = Centered("© 2026 KOCH Engineering", Font, Color.DimGray, y + 6) + 10
             y = CenteredLink("Source code and user guide on GitHub", Font, GitHub, y)
             y = Centered("Built with Claude (Anthropic)", New Font("Segoe UI", 8.0F, FontStyle.Italic), Color.Gray, y + 4)
+            y = CenteredLink("Find it useful?  ☕ Buy me a coffee", New Font("Segoe UI", 8.25F), "https://buymeacoffee.com/henrikkoch", y + 6)
 
             Dim ok As New Button With {.Text = "Close", .Size = New Size(84, 28), .DialogResult = DialogResult.OK}
             ok.Location = New Point((ClientSize.Width - ok.Width) \ 2, y + 12)
