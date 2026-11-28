@@ -1,4 +1,5 @@
 ' KOCH Send to PrusaSlicer - progress window and settings dialog
+Imports System.Collections.Generic
 Imports System.Drawing
 Imports System.IO
 Imports System.Linq
@@ -71,56 +72,48 @@ Namespace KochPrusaSlicer
 
             Dim y = 80
             Section("Slicer – PrusaSlicer, Bambu Studio or OrcaSlicer", y) : y += 26
-            _path.Location = New Point(20, y) : _path.Size = New Size(360, 24)
-            For Each p In SlicerLocator.FindAll(s)
-                _path.Items.Add(p)
-            Next
-            _path.Text = s.SlicerPath
-            Controls.Add(_path)
-            ' show the version next to each path in the list
+            _path.Location = New Point(20, y) : _path.Size = New Size(360, 26)
+            _path.DropDownStyle = ComboBoxStyle.DropDownList
             _path.DrawMode = DrawMode.OwnerDrawFixed
-            _path.DropDownWidth = 520
+            _path.ItemHeight = 20
+            _path.DropDownWidth = 360
+            Controls.Add(_path)
+            Fill(SlicerLocator.FindAll(s), s.SlicerPath)
+            ' the list shows "PrusaSlicer 2.9.7", the path is shown underneath
             AddHandler _path.DrawItem, Sub(snd, ev)
                                            ev.DrawBackground()
                                            If ev.Index >= 0 Then
                                                Dim it = CStr(_path.Items(ev.Index))
-                                               Dim v = SlicerLocator.VersionText(it)
-                                               TextRenderer.DrawText(ev.Graphics, SlicerLocator.Describe(it) & "   –   " & it,
-                                                                     _path.Font, ev.Bounds, ev.ForeColor, TextFormatFlags.Left Or TextFormatFlags.VerticalCenter Or TextFormatFlags.EndEllipsis)
+                                               Dim txt = If(it = "", "Automatic (newest stable version)", SlicerLocator.Describe(it))
+                                               TextRenderer.DrawText(ev.Graphics, txt, _path.Font, ev.Bounds, ev.ForeColor,
+                                                                     TextFormatFlags.Left Or TextFormatFlags.VerticalCenter Or TextFormatFlags.EndEllipsis)
                                            End If
                                        End Sub
             Dim browse = Btn("Browse…", 388, y - 1, 74)
             AddHandler browse.Click, Sub()
-                                         Dim p = SlicerLocator.Browse(Me, _path.Text)
+                                         Dim p = SlicerLocator.Browse(Me, Current())
                                          If p <> "" Then
                                              _s.RememberSlicer(p)
                                              If Not _path.Items.Contains(p) Then _path.Items.Add(p)
-                                             _path.Text = p
+                                             _path.SelectedItem = p
                                          End If
                                      End Sub
             Dim find = Btn("Find", 468, y - 1, 72)
             AddHandler find.Click, Sub()
                                        ' search again (also picks up a slicer that is running right now) and refill the list
-                                       Dim cur = _path.Text
+                                       Dim cur = Current()
                                        Dim all = SlicerLocator.FindAll(_s)
-                                       _path.Items.Clear()
-                                       For Each x In all
-                                           _path.Items.Add(x)
-                                       Next
+                                       Fill(all, cur)
                                        If all.Count = 0 Then
                                            MessageBox.Show(Me, "No slicer was found. Use Browse… to point to prusa-slicer.exe, bambu-studio.exe or orca-slicer.exe.", Text)
-                                           Return
+                                       Else
+                                           _path.DroppedDown = True
                                        End If
-                                       _path.Text = If(cur <> "" AndAlso IO.File.Exists(cur), cur, SlicerLocator.Find(_s))
-                                       MessageBox.Show(Me, all.Count & " slicer(s) found:" & vbCrLf & vbCrLf &
-                                                       String.Join(vbCrLf, all.Select(Function(x) "• " & SlicerLocator.Describe(x) & vbCrLf & "   " & x)) &
-                                                       vbCrLf & vbCrLf & "Pick the one to use in the list.", Text)
-                                       _path.DroppedDown = True
                                    End Sub
             y += 30
-            _found.Location = New Point(20, y) : _found.Size = New Size(520, 18)
+            _found.Location = New Point(22, y) : _found.Size = New Size(518, 18)
+            _found.Font = New Font("Segoe UI", 8.0F)
             Controls.Add(_found)
-            AddHandler _path.TextChanged, Sub() UpdateFound()
             AddHandler _path.SelectedIndexChanged, Sub() UpdateFound()
             UpdateFound()
 
@@ -167,24 +160,35 @@ Namespace KochPrusaSlicer
             AcceptButton = ok : CancelButton = cancel
         End Sub
 
+        Private Sub Fill(all As IEnumerable(Of String), selected As String)
+            _path.Items.Clear()
+            _path.Items.Add("")      ' = automatic
+            For Each x In all
+                _path.Items.Add(x)
+            Next
+            If selected <> "" AndAlso Not _path.Items.Contains(selected) AndAlso File.Exists(selected) Then _path.Items.Add(selected)
+            _path.SelectedItem = If(_path.Items.Contains(selected), selected, "")
+        End Sub
+
+        Private Function Current() As String
+            Return If(TryCast(_path.SelectedItem, String), "")
+        End Function
+
+        Private ReadOnly _foundTip As New ToolTip()
+
         Private Sub UpdateFound()
-            Dim p = _path.Text.Trim()
+            Dim p = Current()
             If p = "" Then
-                _found.Text = "Not set – the newest stable version found is used."
-            ElseIf File.Exists(p) Then
-                Dim v = SlicerLocator.VersionText(p)
-                _found.Text = "✓ " & SlicerLocator.Describe(p) &
-                              If(_path.Items.Count > 1, "   –   " & _path.Items.Count & " slicers found, pick one in the list", "")
-                _found.ForeColor = Color.SeaGreen
-                Return
+                Dim auto = SlicerLocator.Find(_s)
+                _found.Text = If(auto = "", "No slicer found – use Browse…", "Uses " & SlicerLocator.Describe(auto) & "   (" & auto & ")")
             Else
-                _found.Text = "File not found."
+                _found.Text = p
             End If
-            _found.ForeColor = Color.DimGray
+            _foundTip.SetToolTip(_found, _found.Text)
         End Sub
 
         Private Sub OnOk(sender As Object, e As EventArgs)
-            Dim p = _path.Text.Trim()
+            Dim p = Current()
             If p <> "" AndAlso Not File.Exists(p) Then
                 MessageBox.Show(Me, "prusa-slicer.exe was not found at that path.", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 Return

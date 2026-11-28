@@ -83,13 +83,8 @@ Namespace KochPrusaSlicer
         ''' <summary>The configured slicer if it still exists, otherwise the default (and remembers it).</summary>
         Public Function Resolve(s As Settings) As String
             If s.SlicerPath <> "" AndAlso File.Exists(s.SlicerPath) Then Return s.SlicerPath
-            Dim found = Find(s)
-            If found <> "" Then
-                s.SlicerPath = found
-                s.Save()
-                Plugin.Log("Using " & Describe(found) & ": " & found)
-            End If
-            Return found
+            ' "Automatic": not stored, so a newer stable version is picked up by itself
+            Return Find(s)
         End Function
 
         ''' <summary>Default when nothing is chosen: newest stable PrusaSlicer, then Bambu Studio, then OrcaSlicer; pre-releases only if nothing else.</summary>
