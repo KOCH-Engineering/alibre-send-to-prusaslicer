@@ -4,7 +4,7 @@
   <DLL type="Managed" loadedWhen="Startup" location="KochPrusaSlicer.dll"/>
   <Icon location="SendToPrusaSlicer.ico"/>
   <Menu text="Slicer"/>
-  <Description>Developed by KOCH Engineering (Henrik J. Koch, Denmark) with help from Claude (Anthropic). One click sends the open part - or every part of the open assembly as separate objects - to PrusaSlicer, Bambu Studio or OrcaSlicer.</Description>
+  <Description>Developed by KOCH Engineering (Henrik J. Koch, Denmark). Built with Claude (Anthropic). One click sends the open part - or every part of the open assembly as separate objects - to PrusaSlicer, Bambu Studio or OrcaSlicer.</Description>
   <Workspace type="Always"/>
   <Property name="Identifier" value="{CD41C50A-D5D1-4801-B9A1-785DEF849D54}"/>
 </AlibreDesignAddOn>

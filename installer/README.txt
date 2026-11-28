@@ -1,7 +1,7 @@
 KOCH Send to PrusaSlicer - add-on for Alibre Design
 ===================================================
 Developed by KOCH Engineering (Henrik J. Koch, Denmark)
-with a lot of help from Claude (Anthropic).
+Built with Claude (Anthropic).
 https://www.linkedin.com/in/henrikjkoch/
 
 One click sends the open part - or every part of the open assembly as

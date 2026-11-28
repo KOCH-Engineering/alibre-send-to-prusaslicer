@@ -35,7 +35,7 @@ VIAddVersionKey "Comments" "Developed by ${PUBLISHER} (Henrik J. Koch, Denmark)"
 !define MUI_UNICON "${LOADER}\SendToPrusaSlicer.ico"
 !define MUI_ABORTWARNING
 !define MUI_WELCOMEPAGE_TITLE "KOCH Send to PrusaSlicer for Alibre Design"
-!define MUI_WELCOMEPAGE_TEXT "KOCH Engineering - Henrik J. Koch - Denmark - © 2026$\r$\nWith a lot of help from Claude (Anthropic).$\r$\n$\r$\nOne click sends the open part - or every part of the open assembly as separate objects - from Alibre Design to PrusaSlicer.$\r$\n$\r$\nRequires Alibre Design (64-bit) and PrusaSlicer.$\r$\n$\r$\nPlease close Alibre Design before you continue."
+!define MUI_WELCOMEPAGE_TEXT "KOCH Engineering - Henrik J. Koch - Denmark - © 2026$\r$\nBuilt with Claude (Anthropic).$\r$\n$\r$\nOne click sends the open part - or every part of the open assembly as separate objects - from Alibre Design to PrusaSlicer.$\r$\n$\r$\nRequires Alibre Design (64-bit) and PrusaSlicer.$\r$\n$\r$\nPlease close Alibre Design before you continue."
 !define MUI_FINISHPAGE_TEXT "KOCH Send to PrusaSlicer is installed. Thank you for using a tool from KOCH Engineering.$\r$\n$\r$\nStart Alibre Design and click Add-on > PrusaSlicer > Send to PrusaSlicer"
 !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README.txt"
 !define MUI_FINISHPAGE_SHOWREADME_TEXT "Show README"
